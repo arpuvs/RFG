@@ -1,9 +1,3 @@
-# Author: Tom MacLeod
-# Date: 10/22/2008
-# Version: 0.1 Beta!
-# Purpose: This module is a generic GPIB wrapper for:
-# Any Generic device.  This helps a programmer issue commands without
-# the need for work arounds.
 from ADI_GPIB.GPIBObject import GPIBObjectBaseClass as GPIBObjectBaseClass
 import time
 import string
@@ -14,7 +8,7 @@ class AgilentN5181A(GPIBObjectBaseClass):
         self.__delay__ = delay
 
     def __GetState__(self):
-        self.instr.ask(':OUTP:STAT?')
+        return self.instr.ask(':OUTP:STAT?')
 
     def __SetState__(self, Enable = True):
         if Enable:
@@ -23,3 +17,14 @@ class AgilentN5181A(GPIBObjectBaseClass):
             self.instr.write(":OUTP:STAT 0")
         else: print('Bad Value')
 
+    def __GetFreq__(self):
+        return self.instr.ask(':FREQ?')
+
+    def __SetFreq__(self, freq):
+        self.instr.write(':FREQ %g' % freq)
+
+    def __GetAmp__(self):
+        return self.instr.ask(':POW?')
+
+    def __SetAmp__(self, amp_in_dBm):
+        self.instr.write(':POW %g dBm' % amp_in_dBm)
