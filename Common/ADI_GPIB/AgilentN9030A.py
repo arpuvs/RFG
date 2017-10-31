@@ -36,3 +36,12 @@ class AgilentN9030A(GPIBObjectBaseClass):
 
     def __SetSpan__(self, span):
         self.instr.write('FREQ:SPAN %g' % span)
+
+    def __GetAverage__(self):
+        return self.instr.ask(':AVER:COUN?')
+
+    def __SetAverage__(self, average):
+        self.instr.write(':AVER:COUN %d' % average)
+
+    def __ClearAverage__(self):
+        self.instr.write(':AVER:CLE')
