@@ -2,11 +2,14 @@ import sys, visa, time
 sys.path.append('../Common')
 from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
+from ADI_GPIB.WatlowF4 import *
+from ADI_GPIB.AgilentN6705B import *
 
-# Supply = E3631A(23)
-Source1 = AgilentN5181A(20)
-Source2 = AgilentN5181A(11)
-Analyzer = AgilentN9030A(18)
+Supply = AgilentN6705B(26)
+# Source1 = AgilentN5181A(20)
+# Source2 = AgilentN5181A(11)
+# Analyzer = AgilentN9030A(18)
+# Oven = WatlowF4(4)
 #
 # date = time.ctime(time.time())
 # date = date.replace(':', '.')
@@ -71,4 +74,10 @@ Analyzer = AgilentN9030A(18)
 # print Analyzer.__GetAverage__()
 # print Analyzer.__GetAverage__()
 # print Analyzer.__GetAverage__()
-Analyzer.__ClearAverage__()
+# Analyzer.__ClearAverage__()
+# for Temp in range(65496, 65496 + 100):
+# print Oven.__SetTemp__(25)
+# print Oven.__GetTemp__()
+# Supply.__Enable__(0, 1)
+# print Supply.__SetI__(0.04, (1, 2))
+print Supply.__SetV__(0, 1)
