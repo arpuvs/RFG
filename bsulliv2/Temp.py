@@ -80,4 +80,11 @@ Supply = AgilentN6705B(26)
 # print Oven.__GetTemp__()
 # Supply.__Enable__(0, 1)
 # print Supply.__SetI__(0.04, (1, 2))
-print Supply.__SetV__(0, 1)
+# print Supply.__SetV__(0, 1)
+#
+# print 1
+# print 2
+# raise Exception ('Blah')
+# print 3
+
+print Supply.__GetI__(1)

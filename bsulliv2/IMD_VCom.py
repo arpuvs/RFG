@@ -77,8 +77,8 @@ def IMD3():
         Analyzer.__SetMarkerFreq__(1, freq + 3e6)
         Analyzer.__ClearAverage__()
         time.sleep(2)
-        higherPeak.append(float(Analyzer.__GetMarkerAmp__(1)))
-        supplyI.append(float(Supply.__GetI__(1)))
+        higherPeak.append(-(float(Analyzer.__GetMarkerAmp__(1))))
+        supplyI.append(-(float(Supply.__GetI__(1))))
 
         # raw_input('Waiting...')
 
@@ -146,7 +146,7 @@ def setTemp(setpoint):
     time.sleep(330)
     return True
 
-
+startTime = time.time()
 date = time.ctime(time.time())
 date = date.replace(':', '.')
 fh = open('Intermod_Dist_' + date + '.csv', 'w')
@@ -154,9 +154,10 @@ header()
 freqlist = [100e6, 250e6, 500e6, 1e9, 1.5e9, 2e9, 2.5e9, 3e9, 3.5e9, 4e9]
 templist = [25, 85, -40]
 vcomlist = []
-for i in range(20,31):
-    vcomlist.append(i/20.0)
+for i in range(20, 31):
+    vcomlist.append(i/10.0)
 
+# print vcomlist
 lowerPeak = []
 higherPeak = []
 lowCarrier = []
@@ -169,6 +170,8 @@ lowerSourceAmp = []
 Supply.__SetV__(5, 1)
 Supply.__SetI__(0.25, 1)
 Supply.__SetI__(0.25, 3)
+Supply.__SetV__(3, 3)
+Supply.__Enable__(True, (1, 3))
 
 # balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
 # balunList = ('S')
@@ -177,10 +180,11 @@ Supply.__SetI__(0.25, 3)
 for vcom in vcomlist:
 #     setTemp(temp)
     Supply.__SetV__(vcom, 3)
-    # fh.write('Balun config = %s' % balun)
-    # fh.write('\n')
+    fh.write('Vcom = %g' % vcom)
+    fh.write('\n')
     # raw_input('Configure Bal uns to : %s' % balun)
     for i in range(1):
         IMD3()
 
-
+print 'Execution time = %g' % (time.time() - startTime)
+fh.write('Execution time = %g' % (time.time() - startTime))
