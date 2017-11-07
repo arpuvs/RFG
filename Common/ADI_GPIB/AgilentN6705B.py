@@ -16,7 +16,8 @@ class AgilentN6705B(GPIBObjectBaseClass):
         # print 'CURR %g,(@%s)' % (i, str(channels).strip('[]()'))
 
     def __GetI__(self, channels):
-        return self.instr.ask('CURR? (@%s)' % str(channels).strip('[]()'))
+        # print 'CURR? (@%s)' % str(channels).strip('[]()')
+        return self.instr.ask('MEAS:CURR? (@%s)' % str(channels).strip('[]()'))
 
     def __SetV__(self, v, channels):
         self.instr.write('VOLT %g,(@%s)' % (v, str(channels).strip('[]()')))
