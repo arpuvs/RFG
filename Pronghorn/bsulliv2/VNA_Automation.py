@@ -50,20 +50,22 @@ def getData():
         status = VNA.__CheckStatus__()
         time.sleep(0.1)
     Scc21 = VNA.__GetData__(1)
+    print Scc21
 
+getData()
 
-supplies = [5.0]
-temps = [25]
-currents = []
-
-VNAinit()
-for temp in temps:
-    # setTemp(temp)
-    for supply in supplies:
-        # setSupply()
-        supply.__SetP6V__(supply)
-        supply.__SetP25V__(3.3)
-        currents.append(float(supply.__MeasP6I__()))
-
-        getData()
+# supplies = [5.0]
+# temps = [25]
+# currents = []
+#
+# VNAinit()
+# for temp in temps:
+#     # setTemp(temp)
+#     for supply in supplies:
+#         # setSupply()
+#         supply.__SetP6V__(supply)
+#         supply.__SetP25V__(3.3)
+#         currents.append(float(supply.__MeasP6I__()))
+#
+#         getData()
 

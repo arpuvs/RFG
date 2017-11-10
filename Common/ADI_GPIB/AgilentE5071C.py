@@ -60,7 +60,7 @@ class AgilentE5071C(GPIBObjectBaseClass):
         else:
             self.instr.write(":TRIG:AVER OFF")
 
-    def __SetActiveTracec__(self, channel, trace):
+    def __SetActiveTrace__(self, channel, trace):
         self.instr.write(":CALC%d:PAR%d:SEL" % (channel, trace))
 
     def __SetBBalParam__(self, channel, trace, param):
@@ -76,4 +76,4 @@ class AgilentE5071C(GPIBObjectBaseClass):
         self.instr.write(':TRIG:SING')
 
     def __GetData__(self, channel):
-        return self.instr.ask('"CALC1:DATA:FDAT?"')
+        return self.instr.ask("CALC%d:DATA:FDAT?" % channel)
