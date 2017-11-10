@@ -18,6 +18,9 @@ class AgilentE5071C(GPIBObjectBaseClass):
         # VNA.__EnableAvg(1, True)
         # VNA.__EnableTrigAvg__(True)
 
+    def __CheckStatus__(self):
+        return int(self.instr.ask('*OPC?'))
+
     def __SetSweepType__(self, trace, type):
         self.instr.write(':SENS%d:SWE:TYPE %s' % (trace, type))
 
@@ -56,3 +59,21 @@ class AgilentE5071C(GPIBObjectBaseClass):
             self.instr.write(":TRIG:AVER ON")
         else:
             self.instr.write(":TRIG:AVER OFF")
+
+    def __SetActiveTracec__(self, channel, trace):
+        self.instr.write(":CALC%d:PAR%d:SEL" % (channel, trace))
+
+    def __SetBBalParam__(self, channel, trace, param):
+        self.instr.write(":CALC%d:FSIM:BAL:PAR%d:BBAL %s" % (channel, trace, param))
+
+    def __SetActiveFormat__(self, channel, format):
+        self.instr.write(":CALC%d:FORM %s" % (channel, format))
+
+    def __InitMeas__(self, channel):
+        self.instr.write(':INIT%d' % channel)
+
+    def __SingleTrig__(self):
+        self.instr.write(':TRIG:SING')
+
+    def __GetData__(self, channel):
+        return self.instr.ask('"CALC1:DATA:FDAT?"')
