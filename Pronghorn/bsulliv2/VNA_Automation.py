@@ -50,7 +50,15 @@ def getData():
         status = VNA.__CheckStatus__()
         time.sleep(0.1)
     Scc21 = VNA.__GetData__(1)
-    print Scc21
+    Scc21 = data.split(',')
+    for i in range(len(str)):
+        if (I % 2) == 0:
+            Scc21 = float(str[i])
+        else:
+            Scc21junk = float(str[i])
+
+    # Sdc21
+
 
 getData()
 
