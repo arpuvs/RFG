@@ -55,9 +55,9 @@ def meas():
         else:
             imagans.append(float(ans[val]))
 
-    compans []
+    compans = []
     for val in range(len(magans)):
-        compans.append(magans[val] + imagans[] * 1j)
+        compans.append(magans[val] + imagans[val] * 1j)
 
     # return compans
     return magans, imagans
