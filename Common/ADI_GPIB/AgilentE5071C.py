@@ -21,59 +21,59 @@ class AgilentE5071C(GPIBObjectBaseClass):
     def __CheckStatus__(self):
         return int(self.instr.ask('*OPC?'))
 
-    def __SetSweepType__(self, trace, type):
+    def __SetSweepType__(self, trace, type):  # May be different for PXA - see [:SENSe]:SWEep:TYPE FFT|SWEep***
         self.instr.write(':SENS%d:SWE:TYPE %s' % (trace, type))
 
-    def __SetStartf__(self, trace, freq):
+    def __SetStartf__(self, trace, freq):  # Same on PXA
         self.instr.write(':SENS%d:FREQ:STAR %g' % (trace, freq))
 
-    def __SetStopf__(self, trace, freq):
+    def __SetStopf__(self, trace, freq):  # Same on PXA
         self.instr.write(":SENS%d:FREQ:STOP %g" % (trace, freq))
 
-    def __SetNumPoints__(self, trace, pts):
+    def __SetNumPoints__(self, trace, pts):  # Same on PXA
         self.instr.write(":SENS%d:SWE:POIN %g" % (trace, pts))
 
-    def __SetAvg__(self, trace, num):
+    def __SetAvg__(self, trace, num):  # Same on PXA
         self.instr.write(":SENS%d:AVER:COUN %g" % (trace, num))
 
-    def __SetAutoTime__(self, trace, enab):
+    def __SetAutoTime__(self, trace, enab):  # Same on PXA
         self.instr.write(":SENS%d:SWE:TIME:AUTO %d" % (trace, enab))
 
-    def __SetTrigType__(self, typ):
+    def __SetTrigType__(self, typ):  # Same on PXA (I think?)
         self.instr.write(":TRIG:SOUR %s" % typ)
 
-    def __SetContinuous__(self, trace, enab):
+    def __SetContinuous__(self, trace, enab):  # Same on PXA
         if enab:
             self.instr.write(":INIT%d:CONT ON" % trace)
         else:
             self.instr.write(":INIT%d:CONT OFF" % trace)
 
-    def __EnableAvg__(self, trace, enab):
+    def __EnableAvg__(self, trace, enab):  # Same on PXA
         if enab:
             self.instr.write(":SENS%d:AVER ON" % trace)
         else:
             self.instr.write(":SENS%d:AVER OFF" % trace)
 
-    def __EnableTrigAvg__(self, enab):
+    def __EnableTrigAvg__(self, enab):  # Can't find on PXA***
         if enab:
             self.instr.write(":TRIG:AVER ON")
         else:
             self.instr.write(":TRIG:AVER OFF")
 
-    def __SetActiveTrace__(self, channel, trace):
+    def __SetActiveTrace__(self, channel, trace):  # Can't find on PXA***
         self.instr.write(":CALC%d:PAR%d:SEL" % (channel, trace))
 
-    def __SetBBalParam__(self, channel, trace, param):
+    def __SetBBalParam__(self, channel, trace, param):  # Can't find on PXA***
         self.instr.write(":CALC%d:FSIM:BAL:PAR%d:BBAL %s" % (channel, trace, param))
 
-    def __SetActiveFormat__(self, channel, format):
+    def __SetActiveFormat__(self, channel, format):  # Can't find on PSA: see CALCulate:EVM:MARKer[1]|2|...|12:CFORmat RECTangular|POLar***
         self.instr.write(":CALC%d:FORM %s" % (channel, format))
 
-    def __InitMeas__(self, channel):
-        self.instr.write(':INIT%d' % channel)
+    def __InitMeas__(self, channel):  # Same on PXA
+        self.instr.write('INIT%d' % channel)
 
-    def __SingleTrig__(self):
+    def __SingleTrig__(self):   # Can't find on PXA***
         self.instr.write(':TRIG:SING')
 
-    def __GetData__(self, channel):
+    def __GetData__(self, channel):  # Can't find on PXA***
         return self.instr.ask("CALC%d:DATA:FDAT?" % channel)
