@@ -1,13 +1,13 @@
 import sys, visa, time
-sys.path.append('../Common')
+sys.path.append('../../Common')
 from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
 from ADI_GPIB.AgilentN6705B import *
 from ADI_GPIB.WatlowF4 import *
 
 Supply = AgilentN6705B(26)
-# Source1 = AgilentN5181A(20)
-Source = AgilentN5181A(11)
+Source = AgilentN5181A(20)
+# Source = AgilentN5181A(11)
 Analyzer = AgilentN9030A(18)
 Oven = WatlowF4(4)
 startTime = time.time()
@@ -102,14 +102,19 @@ def P3dB(freq):
     Source.__SetState__(1)
     # time.sleep(3)
     outAmp = float(Source.__GetAmp__())
+    time.sleep(1)
+    if freq > 4.0e9:
+        time.sleep(4)
     Analyzer.__ClearAverage__()
     time.sleep(2)
     dutAmp = float(Analyzer.__GetMarkerAmp__(1))
     gain = outAmp - dutAmp
+    print outAmp
+    print dutAmp
     print 'Initial gain = %g' % gain
     initGain = gain
     inc = 5
-    print inc
+    print 'Inc = %d' % inc
     while abs(gain - initGain) <= 1.0:
         sourceAmp = sourceAmp + inc
         # Source.__SetFreq__(freq)
@@ -127,11 +132,11 @@ def P3dB(freq):
         if sourceAmp >= 15:
             raise Exception('Amplitude too high, check configuration')
 
-    sourceAmp = sourceAmp - (2*inc + 1)
-    print sourceAmp
+    sourceAmp = sourceAmp - (inc + 1)
+    # print sourceAmp
     inc = 1
     gain = initGain
-    print inc
+    print 'Inc = %d' % inc
     while abs(gain - initGain) <= 1.0:
         sourceAmp = sourceAmp + inc
         # Source.__SetFreq__(freq)
@@ -145,12 +150,13 @@ def P3dB(freq):
         dutAmp = float(Analyzer.__GetMarkerAmp__(1))
         gain = amp - dutAmp
         print 'Difference = %g' % abs(gain - initGain)
+        print sourceAmp
         if sourceAmp >= 15:
             raise Exception('Amplitude too high, check configuration')
 
     sourceAmp = sourceAmp - (inc + 0.2)
     inc = 0.2
-    print inc
+    print 'Inc = %g' % inc
     gain = initGain
     while abs(gain - initGain) <= 1.0:
         sourceAmp = sourceAmp + inc
@@ -165,6 +171,7 @@ def P3dB(freq):
         dutAmp = float(Analyzer.__GetMarkerAmp__(1))
         gain = amp - dutAmp
         print 'Difference = %g' % abs(gain - initGain)
+        print sourceAmp
         if sourceAmp >= 15:
             raise Exception('Amplitude too high, check configuration')
 
@@ -205,7 +212,10 @@ date = time.ctime(time.time())
 date = date.replace(':', '.')
 fh = open('P3dB' + date + '.csv', 'w')
 header()
-freqlist = [100e6, 250e6, 500e6, 1e9, 1.5e9, 2e9, 2.5e9, 3e9, 3.5e9, 4e9]
+# freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
+# freqlist = [3.0e9, 3.5e9, 4.0e9]
+freqlist = [3.5e9, 4.0e9]
+# freqlist = [4.0e9]
 templist = [25, 85, -40]
 
 
@@ -224,9 +234,10 @@ Supply.__SetI__(0.25, 1)
 # fh.write('Temp = %d' % temp)
 # fh.write('\n')
 # raw_input('Configure Bal uns to : %s' % balun)
-for i in range(3):
+for i in range(1):
     fh.write('Test %d\n' % i)
     for freq in freqlist:
+        print 'Freq = %g *************' % freq
     # HD23()
         val = float(P3dB(freq))
         fh.write('%g, %g, \n' % (freq, val))
