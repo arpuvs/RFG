@@ -1,0 +1,6 @@
+Enabled at Ven = 1.3467
+Disabled at Ven = 1.3444
+Enabled at Ven = 1.3458
+Disabled at Ven = 1.3445
+Enabled at Ven = 1.3460
+Disabled at Ven = 1.3445
