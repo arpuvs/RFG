@@ -87,6 +87,7 @@ def HD23():
 
     # fh.write('Test %d' % i)
     # fh.write('\n')
+    print freqlistReal
     fh.write('Frequency:,')
     fh.write(str(freqlistReal).strip('[]'))
     fh.write('\n')
@@ -245,14 +246,14 @@ freqlist = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16]
 # vcomlist = []
 # for i in range(20, 31):
 #     vcomlist.append(i/10.0)
-vcomlist = [2.0, 2.5, 3.0]
-
+# vcomlist = [2.0, 2.5, 3.0]
+vcomlist = [3.0]
 print vcomlist
 # freqlist = [3.0e9, 3.5e9, 4.0e9]
 # freqlist = [3.5e9, 4.0e9]
 # freqlist = [4.0e9]
-templist = [25, 85, -40]
-
+# templist = [25, 85, -40]
+templist = [-40]
 
 
 # Vsupply = Ch1, Ven = Ch2, Vcom = Ch3
@@ -262,6 +263,8 @@ Supply.__SetI__(0.25, 1)
 
 # balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
 # balunList = ('S')
+HD23()
+
 for temp in templist:
     setTemp(temp)
     fh.write('Temp = %d' % temp)
@@ -269,7 +272,7 @@ for temp in templist:
     for vcom in vcomlist:
         Supply.__SetV__(vcom, 3)
         print 'Vcom = %g' % vcom
-        fh.write('Vcom = %g' % vcom)
+        fh.write('Vcom = %g\n' % vcom)
         HD23()
 
 #     for Vcom in Vcomlist:
