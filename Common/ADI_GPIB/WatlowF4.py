@@ -22,4 +22,4 @@ class WatlowF4(GPIBObjectBaseClass):
         # self.instr.write()
 
     def __GetSP__(self):
-        self.instr.ask('R? 300,1')
+        return self.instr.ask('R? 300,1')

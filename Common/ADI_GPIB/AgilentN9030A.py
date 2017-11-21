@@ -26,7 +26,15 @@ class AgilentN9030A(GPIBObjectBaseClass):
         self.instr.write(':CALC:MARK%d:X:CENT %g' % (marker, freq))
 
     def __GetMarkerAmp__(self, marker):
-        return self.instr.ask(':CALC:MARK%d:Y?' % marker)
+        i = 0
+        amp = self.instr.ask(':CALC:MARK%d:Y?' % marker)
+        while (float(amp) > 200) | (float(amp) < -400):
+            time.sleep(0.5)
+            amp = self.instr.ask(':CALC:MARK%d:Y?' % marker)
+            i = i + 1
+            if i > 100:
+                raise Exception('Valid marker amplitude cannot be found')
+        return amp
 
     def __MarkerMax__(self, marker):
         self.instr.write('CALC:MARK%d:MAX' % marker)
@@ -45,3 +53,13 @@ class AgilentN9030A(GPIBObjectBaseClass):
 
     def __ClearAverage__(self):
         self.instr.write(':AVER:CLE')
+
+    def __CheckStatus__(self, maxWait):
+        endtime = time.time() + maxWait
+        while True:
+            try:
+                return self.instr.ask('*OPC?')
+            except:
+                time.sleep(0.1)
+                if time.time() > endtime:
+                    raise Exception('Maximum wait time exceeded')

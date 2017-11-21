@@ -1,16 +1,71 @@
 import sys, visa, time
-sys.path.append('../Common')
-from ADI_GPIB.AgilentN5181A import *
+# sys.path.append('../../Common/FMB_USB_Python_Files')
+sys.path.append('../../Common')
+# # C:\Git_Repositories\RFG\Common\FMB_USB_Python_Files
+# from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
-from ADI_GPIB.WatlowF4 import *
-from ADI_GPIB.AgilentN6705B import *
+# from ADI_GPIB.WatlowF4 import *
+# # from ADI_GPIB.AgilentN6705B import *
+# from FMB import *
+#
 
-Supply = AgilentN6705B(26)
-# Source1 = AgilentN5181A(20)
+# import atexit
+#
+# def exit_handler():
+#     print 'Handler run'
+#
+# atexit.register(exit_handler)
+
+# asdfsadf asdfasd
+
+# fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
+#           5: "120 MHz", 6: "225.3 MHz", 7: "350.3 MHz", 8: "500 MHz",
+#           9: "800.3 MHz", 10: "1 GHz", 11: "1.5 GHz", 12: "2 GHz",
+#           13: "2.5 GHz", 14: "3 GHz", 15: "3.5 GHz", 16: "4 GHz",
+#           17: "4.5 GHz", 18: "5 GHz", 19: "5.5 GHz", 20: "5.9 GHz",
+#           21: "Aux"}
+#
+# Filter = FMB('COM3', fmbDict)
 # Source2 = AgilentN5181A(11)
 # Analyzer = AgilentN9030A(18)
-# Oven = WatlowF4(4)
 #
+# # # Filter.select_filter(3)
+# # print Filter.get_filter_center_freq_hz(19)
+#
+# # Filter box test
+# for i in range(1, 21):
+#     # Filter.select_filter(i)
+#     # Source2.__SetFreq__
+#     val = fmbDict[i].split()
+#     if val[1] == 'MHz': val = float(val[0]) * 1e6
+#     elif val[1] == 'GHz': val = float(val[0]) * 1e9
+#     print val
+#     Source2.__SetFreq__(val)
+#     Analyzer.__Setfc__(val)
+#     Filter.select_filter(i)
+#     Analyzer.__SetMarkerFreq__(1, val)
+#     time.sleep(0.5)
+#     carrierMag = float(Analyzer.__GetMarkerAmp__(1))
+
+# Want -2dBm out of part
+
+# Supply = AgilentN6705B(26)
+# Source1 = AgilentN5181A(20)
+# Source2 = AgilentN5181A(11)
+Analyzer = AgilentN9030A(18)
+# Oven = WatlowF4(4)
+# #
+#
+# print Oven.__GetTemp__()
+# print Oven.__GetSP__()
+
+print Analyzer.__ClearAverage__()
+print Analyzer.__SetAverage__(50)
+print time.sleep(1)
+print Analyzer.__CheckStatus__(600)
+
+
+
 # date = time.ctime(time.time())
 # date = date.replace(':', '.')
 # fh = open('Intermod_Dist_' + date + '.csv', 'w')
@@ -87,4 +142,4 @@ Supply = AgilentN6705B(26)
 # raise Exception ('Blah')
 # print 3
 
-print Supply.__GetI__(1)
+# print Supply.__GetI__(1)
