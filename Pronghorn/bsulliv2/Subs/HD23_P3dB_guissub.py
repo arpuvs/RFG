@@ -223,7 +223,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             current = float(Oven.__GetTemp__())
         print '@ Temp %d' % setpoint
         # if temp != 25:
-        time.sleep(5)
+        time.sleep(330)
         return True
 
     fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
