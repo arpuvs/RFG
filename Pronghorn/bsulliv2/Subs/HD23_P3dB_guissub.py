@@ -1,6 +1,6 @@
 import sys, visa, time
-sys.path.append('../../Common')
-sys.path.append('../../Common/FMB_USB_Python_Files')
+sys.path.append('../../../Common')
+sys.path.append('../../../Common/FMB_USB_Python_Files')
 from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
 from ADI_GPIB.AgilentN6705B import *
@@ -17,7 +17,7 @@ startTime = time.time()
 # Filter = FMB('COM3', fmbDict)
 
 
-def HD23Main(path, freqlist, vcomlist, templist):
+def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
 
     def HD23():
         Analyzer.__SetSpan__(10e3)
@@ -30,10 +30,10 @@ def HD23Main(path, freqlist, vcomlist, templist):
         secondNormal = []
         thirdNormal = []
         supplyI = []
-
+        freqlistReal = []
 
         for freqindex in freqlist:
-            freqlistReal = []
+
             freq = fmbDict[freqindex].split()
             if freq[1] == 'MHz':
                 freq = float(freq[0]) * 1e6
@@ -198,8 +198,8 @@ def HD23Main(path, freqlist, vcomlist, templist):
         return amp
 
 
-    def header():
-        dut = '3-4'
+    def header(dut):
+        dut = dut
         test = 'P3dB'
         equipment = 'N6705B N5181A N9030A BAL0026 6'
         # supplyV = Supply.__MeasP25V__()
@@ -223,7 +223,7 @@ def HD23Main(path, freqlist, vcomlist, templist):
             current = float(Oven.__GetTemp__())
         print '@ Temp %d' % setpoint
         # if temp != 25:
-        time.sleep(330)
+        time.sleep(5)
         return True
 
     fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
@@ -241,7 +241,7 @@ def HD23Main(path, freqlist, vcomlist, templist):
     # fh = open('P3dB' + date + '.csv', 'w')
     fh = open(path + 'HD23' + date + '.csv', 'w')
 
-    # header()
+    header(dutNumber)
 
 
     # Vsupply = Ch1, Ven = Ch2, Vcom = Ch3
@@ -258,10 +258,10 @@ def HD23Main(path, freqlist, vcomlist, templist):
         for vcom in vcomlist:
             Supply.__SetV__(vcom, 3)
             print 'Vcom = %g' % vcom
-            fh.write('Vcom = %g' % vcom)
+            fh.write('Vcom = %g\n' % vcom)
             HD23()
 
-    #     for Vcom in Vcomlist:
+    #     for Vcom in Vcomlist:♥
     # for balun in balunList:
     #     setTemp(temp)
     #     fh.write('Balun config = %s' % balun)
@@ -288,17 +288,20 @@ if __name__ == '__main__':
 
     # path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\HD23\\'
     # header()
-    path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\HD23'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\HD23\\'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
-    freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16]
+    # freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16]
+    freqs = [12]
     # vcomlist = []
     # for i in range(20, 31):
     #     vcomlist.append(i/10.0)
-    vcoms = [2.0, 2.5, 3.0]
-
+    # vcoms = [2.0, 2.5, 3.0]
+    vcoms = [2.5]
     # print vcomlist
     # freqlist = [3.0e9, 3.5e9, 4.0e9]
     # freqlist = [3.5e9, 4.0e9]
     # freqlist = [4.0e9]
-    temps = [25, 85, -40]
-    HD23Main(path, freqs, vcoms, temps)
+    # temps = [25, 85, -40]
+    temps = [25]
+    dut = 0
+    HD23Main(path, freqs, vcoms, temps, dut)
