@@ -261,7 +261,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             fh.write('Vcom = %g\n' % vcom)
             HD23()
 
-    #     for Vcom in Vcomlist:♥
+    #     for Vcom in Vcomlist:
     # for balun in balunList:
     #     setTemp(temp)
     #     fh.write('Balun config = %s' % balun)
