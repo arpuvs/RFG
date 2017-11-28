@@ -1,8 +1,8 @@
 # Author: Ben Sullivan
 # Date: 11/22/2017
 
+# File initialization and instrumennt import
 import sys
-sys.path.append('Subs')
 sys.path.append('../../Common')
 sys.path.append('../../Common/FMB_USB_Python_Files')
 from ADI_GPIB.AgilentN5181A import *
@@ -11,15 +11,15 @@ from ADI_GPIB.AgilentN6705B import *
 from ADI_GPIB.WatlowF4 import *
 from FMB import *
 
+# PyQT and HD23 import
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from HD23_P3dB_guissub import HD23Main
+from HD23_P3dB import HD23Main
 
 class HDGUI(QMainWindow):
     def __init__(self):
         # Defines window
         super(HDGUI, self).__init__(None)
-
         win = QWidget()
 
         # Top menu bar
@@ -33,8 +33,6 @@ class HDGUI(QMainWindow):
         fil.addAction(self.save)
         self.save.triggered.connect(lambda: self.fileBar(self.save))
         self.load.triggered.connect(lambda: self.fileBar(self.load))
-
-
 
         # Line prompts
         self.dutPrompt = QLineEdit()
@@ -120,9 +118,9 @@ class HDGUI(QMainWindow):
         win.setLayout(layout)
         self.setCentralWidget(win)
         self.setWindowTitle('HD23 GUI')
-        # self.show()
 
     def fileBar(self, option):
+        # If save menu bar item is hit a file prompt is opened and the preset is saved in the given lcacation
         if option.text() == 'Save preset':
             fname = QFileDialog.getExistingDirectory(self, 'Open Directory')
             fh = open(fname + '\\HD23_Preset.txt', 'w')
@@ -132,6 +130,8 @@ class HDGUI(QMainWindow):
             fh.write(self.tempLine.text() + '\n')
             fh.write(self.vcomLine.text() + '\n')
             fh.close()
+
+        # When the open item is hit a file prompt is open and the selected file is loaded into the gui
         if option.text() == 'Open preset':
             fname = QFileDialog.getOpenFileName(self, 'Open preset')
             fh = open(fname, 'r')
@@ -146,7 +146,7 @@ class HDGUI(QMainWindow):
             self.vcomLine.setText(data[4])
             fh.close()
 
-    # Fils line prompts based on button pressed
+    # Fills line prompts based on button pressed
     def fillButton(self, button):
         if button == self.freqDef:
             self.freqLine.setText('4e9')
@@ -161,12 +161,14 @@ class HDGUI(QMainWindow):
             self.vcomLine.setText('2.5')
         elif button == self.vcomSweepDef:
             self.vcomLine.setText('2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0')
+
+        # Opens file prompt to fill line prompt
         elif button == self.filePrompt:
             fname = QFileDialog.getExistingDirectory(self, 'Open Directory')
             self.fileLine.setText(fname)
 
     def runProgram(self):
-
+        # Filter box dictionary
         fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
                    5: "120 MHz", 6: "225.3 MHz", 7: "350.3 MHz", 8: "500 MHz",
                    9: "800.3 MHz", 10: "1 GHz", 11: "1.5 GHz", 12: "2 GHz",
@@ -174,35 +176,38 @@ class HDGUI(QMainWindow):
                    17: "4.5 GHz", 18: "5 GHz", 19: "5.5 GHz", 20: "5.9 GHz",
                    21: "Aux"}
 
-        error = 'Invlaid input'
-        # print self.tempLine.text()
+        error = 'Invlaid input'  # Default error message
+
         try:
+            # Collect input from line prompts
             dut = self.dutPrompt.text()
             path = self.fileLine.text()
             temps = str(self.tempLine.text()).split()
             freqs = str(self.freqLine.text()).split()
             vcoms = str(self.vcomLine.text()).split()
 
+            # Converts and constrains temperature input
             for index in range(len(temps)):
                 temps[index] = float(temps[index].strip(','))
                 if (temps[index] < -40) | (temps[index] > 125):
                     error = 'Temperature out of range'
                     raise Exception
 
+            # Converts and constrains frequency input
             for index in range(len(freqs)):
                 freqs[index] = float(freqs[index].strip(','))
                 if (freqs[index] < 0) | (freqs[index] > 6e9):
                     error = 'Frequency out of range'
                     raise Exception
 
+                # Converts frequency given to filter box format
                 if (freqs[index] >= 1e6) & (freqs[index] < 1e9):
                     freqs[index] = '%g MHz' % (freqs[index]/1.0e6)
-
                 elif freqs[index] >= 1e9:
                     freqs[index] = '%g GHz' % (freqs[index]/1.0e9)
-
                 print freqs[index]
 
+                # Cross references dictionary to find relevant frequency
                 for key in fmbDict:
                     if fmbDict[key] == freqs[index]:
                         freqs[index] = key
@@ -211,7 +216,7 @@ class HDGUI(QMainWindow):
                         error = 'Frequency not in filter box'
                         raise Exception
 
-
+            # Converts and constrains common mode voltages
             for index in range(len(vcoms)):
                 vcoms[index] = float(vcoms[index].strip(','))
                 if (vcoms[index] < 2) | (vcoms[index] > 3):
@@ -222,20 +227,19 @@ class HDGUI(QMainWindow):
             print'Temp = %s' % temps
             print'Freq = %s' % freqs
 
-            HD23Main(path, freqs, vcoms, temps, dut)
+            HD23Main(path, freqs, vcoms, temps, dut)  # Main program call
 
             print 'Done!'
 
-
-
         except:
-            print error
+            print error  # If execution fails print determined cause
 
 
         # HD23(self.dutPrompt.text(), self.tempLine.text(), self.freqLine.text(), self.fileLine.text())
 
 
 def main():
+    # Initialization
     app = QApplication(sys.argv)
     ex = HDGUI()
     ex.show()
