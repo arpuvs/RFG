@@ -17,194 +17,200 @@ Analyzer = AgilentN9030A(18)
 Oven = WatlowF4(4)
 startTime = time.time()
 
-# Main IMD measurement program
-def IMD3():
-    # Initializes spectrum analyzer for measurements
-    Analyzer.__SetSpan__(10e3)
-    Analyzer.__SetAverage__(100)
+def IMD3main():
+    # Main IMD measurement program
+    def IMD3():
+        # Initializes spectrum analyzer for measurements
+        Analyzer.__SetSpan__(10e3)
+        Analyzer.__SetAverage__(100)
 
-    # Initializes arrays
-    lowerPeak = []
-    higherPeak = []
-    lowCarrier = []
-    highCarrier = []
-    higherSourceAmp = []
-    lowerSourceAmp = []
-    supplyI = []
+        # Initializes arrays
+        lowerPeak = []
+        higherPeak = []
+        lowCarrier = []
+        highCarrier = []
+        higherSourceAmp = []
+        lowerSourceAmp = []
+        supplyI = []
 
-    for freq in freqlist:
-        # Set sources
-        Source1.__SetState__(0)
-        Source2.__SetState__(0)
-        Source1.__SetFreq__(freq - 1e6)
-        Source2.__SetFreq__(freq + 1e6)
 
-        # Configure and measure low f Carrier
-        Analyzer.__Setfc__(freq - 1e6)
-        Analyzer.__SetMarkerFreq__(1, freq - 1e6)
-        Source1.__SetState__(1)
-        Analyzer.__ClearAverage__()
-        Analyzer.__CheckStatus__(300)   # Waits for averaging
-        carrierMag = float(Analyzer.__GetMarkerAmp__(1))  # Measures initial amplitude
-        while abs(carrierMag - -8) >= 0.1:  # Adjusts until carrier mag is within 0.1dBm of desired amplitude
-            sourceAmp = float(Source1.__GetAmp__())     # Gets amplitude
-            setAmp = sourceAmp + (-8 - carrierMag)      # Adjusts amplitude
-            if setAmp >= 15:    # Raises flag if max amplitude exceeded
-                raise Exception('Amplitude too high, check configuration')
-            Source1.__SetAmp__(setAmp)      # Sets new amplitude
+        for freq in freqlist:
+            # Set sources
+            Source1.__SetState__(0)
+            Source2.__SetState__(0)
+            Source1.__SetFreq__(freq - 1e6)
+            Source2.__SetFreq__(freq + 1e6)
+
+            # Configure and measure low f Carrier
+            Analyzer.__Setfc__(freq - 1e6)
+            Analyzer.__SetMarkerFreq__(1, freq - 1e6)
+            Source1.__SetState__(1)
             Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            carrierMag = float(Analyzer.__GetMarkerAmp__(1))    # Gets new amplitude
+            Analyzer.__CheckStatus__(300)   # Waits for averaging
+            carrierMag = float(Analyzer.__GetMarkerAmp__(1))  # Measures initial amplitude
+            while abs(carrierMag - -8) >= 0.1:  # Adjusts until carrier mag is within 0.1dBm of desired amplitude
+                sourceAmp = float(Source1.__GetAmp__())     # Gets amplitude
+                setAmp = sourceAmp + (-8 - carrierMag)      # Adjusts amplitude
+                if setAmp >= 15:    # Raises flag if max amplitude exceeded
+                    raise Exception('Amplitude too high, check configuration')
+                Source1.__SetAmp__(setAmp)      # Sets new amplitude
+                Analyzer.__ClearAverage__()
+                Analyzer.__CheckStatus__(300)
+                carrierMag = float(Analyzer.__GetMarkerAmp__(1))    # Gets new amplitude
 
-        # Records measured source and carrier values
-        lowCarrier.append(float(Analyzer.__GetMarkerAmp__(1)))
-        lowerSourceAmp.append(float(Source1.__GetAmp__()))
+            # Records measured source and carrier values
+            lowCarrier.append(float(Analyzer.__GetMarkerAmp__(1)))
+            lowerSourceAmp.append(float(Source1.__GetAmp__()))
 
-        # Repeat for high f carrier - same process as above
-        Source1.__SetState__(0)
-        Analyzer.__Setfc__(freq + 1e6)
-        Analyzer.__SetMarkerFreq__(1, freq + 1e6)
-        Source2.__SetState__(1)
-        Analyzer.__ClearAverage__()
-        Analyzer.__CheckStatus__(300)
-        carrierMag = float(Analyzer.__GetMarkerAmp__(1))
-        while abs(carrierMag - -8) >= 0.1:
-            sourceAmp = float(Source2.__GetAmp__())
-            Source2.__SetAmp__(sourceAmp + (-8 - carrierMag))
+            # Repeat for high f carrier - same process as above
+            Source1.__SetState__(0)
+            Analyzer.__Setfc__(freq + 1e6)
+            Analyzer.__SetMarkerFreq__(1, freq + 1e6)
+            Source2.__SetState__(1)
             Analyzer.__ClearAverage__()
             Analyzer.__CheckStatus__(300)
             carrierMag = float(Analyzer.__GetMarkerAmp__(1))
-            if sourceAmp >= 15:
-                raise Exception('Amplitude too high, check configuration')
-        highCarrier.append(float(Analyzer.__GetMarkerAmp__(1)))
-        higherSourceAmp.append(float(Source2.__GetAmp__()))
+            while abs(carrierMag - -8) >= 0.1:
+                sourceAmp = float(Source2.__GetAmp__())
+                Source2.__SetAmp__(sourceAmp + (-8 - carrierMag))
+                Analyzer.__ClearAverage__()
+                Analyzer.__CheckStatus__(300)
+                carrierMag = float(Analyzer.__GetMarkerAmp__(1))
+                if sourceAmp >= 15:
+                    raise Exception('Amplitude too high, check configuration')
+            highCarrier.append(float(Analyzer.__GetMarkerAmp__(1)))
+            higherSourceAmp.append(float(Source2.__GetAmp__()))
 
-        # Measure lower IMD3
-        Source1.__SetState__(1)
-        Analyzer.__Setfc__(freq - 3e6)
-        Analyzer.__SetMarkerFreq__(1, freq - 3e6)
-        # raw_input('Waiting...')
-        Analyzer.__ClearAverage__()
-        Analyzer.__CheckStatus__(300)
-        lowerPeak.append(float(Analyzer.__GetMarkerAmp__(1)))
+            # Measure lower IMD3
+            Source1.__SetState__(1)
+            Analyzer.__Setfc__(freq - 3e6)
+            Analyzer.__SetMarkerFreq__(1, freq - 3e6)
+            # raw_input('Waiting...')
+            Analyzer.__ClearAverage__()
+            Analyzer.__CheckStatus__(300)
+            lowerPeak.append(float(Analyzer.__GetMarkerAmp__(1)))
 
-        # Measure higher IMD3
-        Analyzer.__Setfc__(freq + 3e6)
-        Analyzer.__SetMarkerFreq__(1, freq + 3e6)
-        Analyzer.__ClearAverage__()
-        Analyzer.__CheckStatus__(300)
-        higherPeak.append(float(Analyzer.__GetMarkerAmp__(1)))
-        supplyI.append(float(Supply.__GetI__(1)))
+            # Measure higher IMD3
+            Analyzer.__Setfc__(freq + 3e6)
+            Analyzer.__SetMarkerFreq__(1, freq + 3e6)
+            Analyzer.__ClearAverage__()
+            Analyzer.__CheckStatus__(300)
+            higherPeak.append(float(Analyzer.__GetMarkerAmp__(1)))
+            supplyI.append(float(Supply.__GetI__(1)))
 
-    leftNormal = []
-    rightNormal = []
-    # Converts dBm measurements to dBc
-    for j in range(len(lowerPeak)):
-        leftNormal.append(-(float(lowCarrier[j]) - float(lowerPeak[j])))
-        rightNormal.append(-(float(highCarrier[j]) - float(higherPeak[j])))
+        leftNormal = []
+        rightNormal = []
+        # Converts dBm measurements to dBc
+        for j in range(len(lowerPeak)):
+            leftNormal.append(-(float(lowCarrier[j]) - float(lowerPeak[j])))
+            rightNormal.append(-(float(highCarrier[j]) - float(higherPeak[j])))
 
 
-    # Writes all results to output file
-    fh.write('Test %d' % i)
-    fh.write('\n')
-    fh.write('Frequency:,')
-    fh.write(str(freqlist).strip('[]'))
-    fh.write('\n')
-    fh.write('Supply Current:,')
-    fh.write(str(supplyI).strip('[]'))
-    fh.write('\n')
-    fh.write('Low left:,')
-    fh.write(str(lowerPeak).strip('[]'))
-    fh.write('\n')
-    fh.write('Low right:,')
-    fh.write(str(higherPeak).strip('[]'))
-    fh.write('\n')
-    fh.write('High left:,')
-    fh.write(str(highCarrier).strip('[]'))
-    fh.write('\n')
-    fh.write('High right:,')
-    fh.write(str(lowCarrier).strip('[]'))
-    fh.write('\n')
-    fh.write('Left dBc:,')
-    fh.write(str(leftNormal).strip('[]'))
-    fh.write('\n')
-    fh.write('Right dBc:,')
-    fh.write(str(rightNormal).strip('[]'))
-    fh.write('\n')
-    print 'Left normal = %g' % leftNormal
+        # Writes all results to output file
+        fh.write('Test %d' % i)
+        fh.write('\n')
+        fh.write('Frequency:,')
+        fh.write(str(freqlist).strip('[]'))
+        fh.write('\n')
+        fh.write('Supply Current:,')
+        fh.write(str(supplyI).strip('[]'))
+        fh.write('\n')
+        fh.write('Low left:,')
+        fh.write(str(lowerPeak).strip('[]'))
+        fh.write('\n')
+        fh.write('Low right:,')
+        fh.write(str(higherPeak).strip('[]'))
+        fh.write('\n')
+        fh.write('High left:,')
+        fh.write(str(highCarrier).strip('[]'))
+        fh.write('\n')
+        fh.write('High right:,')
+        fh.write(str(lowCarrier).strip('[]'))
+        fh.write('\n')
+        fh.write('Left dBc:,')
+        fh.write(str(leftNormal).strip('[]'))
+        fh.write('\n')
+        fh.write('Right dBc:,')
+        fh.write(str(rightNormal).strip('[]'))
+        fh.write('\n')
+        print 'Left normal = %g' % leftNormal
 
-# Print first line of file
-def header():
-    dut = '3-4'
-    test = 'IMD3'
-    equipment = 'N5181A N9030A BAL0026 BAL006'
-    # supplyV = Supply.__MeasP25V__()
-    supplyV = 'Temp'
-    print supplyV
-    # supplyI = Supply.__MeasP25I__()
-    supplyI = 'Temp'
-    print supplyI
-    balun = 'INB: 0-VIN OUTB 0-VOP'
-    header = (dut, date, test, equipment, supplyV, supplyI, balun)
-    header = str(header).strip('()')
-    fh.write(header)
-    fh.write('\n')
+        # Print first line of file
+    def header():
+        dut = '3-4'
+        test = 'IMD3'
+        equipment = 'N5181A N9030A BAL0026 BAL006'
+        # supplyV = Supply.__MeasP25V__()
+        supplyV = 'Temp'
+        print supplyV
+        # supplyI = Supply.__MeasP25I__()
+        supplyI = 'Temp'
+        print supplyI
+        balun = 'INB: 0-VIN OUTB 0-VOP'
+        header = (dut, date, test, equipment, supplyV, supplyI, balun)
+        header = str(header).strip('()')
+        fh.write(header)
+        fh.write('\n')
 
-# Sets oven temperature to setpoint and soaks DUT
-def setTemp(setpoint):
-    Oven.__SetTemp__(setpoint)
-    current = float(Oven.__GetTemp__())
-    while (abs(current - setpoint) > 2):
-        time.sleep(1)
+    # Sets oven temperature to setpoint and soaks DUT
+    def setTemp(setpoint):
+        Oven.__SetTemp__(setpoint)
         current = float(Oven.__GetTemp__())
-    print '@ Temp %d' % setpoint
-    soak = 300
-    time.sleep(soak)
-    return True
+        while (abs(current - setpoint) > 2):
+            time.sleep(1)
+            current = float(Oven.__GetTemp__())
+        print '@ Temp %d' % setpoint
+        soak = 300
+        time.sleep(soak)
+        return True
 
-# Initializes and opens output file
-date = time.ctime(time.time())
-date = date.replace(':', '.')
-fh = open('Intermod_Dist_' + date + '.csv', 'w')
+    # Initializes and opens output file
+    date = time.ctime(time.time())
+    date = date.replace(':', '.')
+    fh = open('Intermod_Dist_' + date + '.csv', 'w')
 
-header()    # Prints first line of file
+    header()    # Prints first line of file
 
-# Initialize arrays
-lowerPeak = []
-higherPeak = []
-lowCarrier = []
-highCarrier = []
-higherSourceAmp = []
-lowerSourceAmp = []
-freqlist = [100e6, 250e6, 500e6, 1e9, 1.5e9, 2e9, 2.5e9, 3e9, 3.5e9, 4e9]
-templist = [25, 85, -40]
-vcomlist = [2.5]
-
-# Configure supplies
-# Vsupply = Ch1, Ven = Ch2, Vcom = Ch3
-Supply.__SetV__(5, 1)
-Supply.__SetI__(0.25, 1)
+    # Configure supplies
+    # Vsupply = Ch1, Ven = Ch2, Vcom = Ch3
+    Supply.__SetV__(5, 1)
+    Supply.__SetI__(0.25, 1)
 
 
-# balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
-# balunList = ('S')
-for temp in templist:
-# for balun in balunList:
-    setTemp(temp)
-    # fh.write('Balun config = %s' % balun)
-    fh.write('Temp = %d' % temp)
-    fh.write('\n')
-    for vcom in vcomlist:
-        Supply.__SetV__(vcom, 3)  # Sets DUT to common mode voltage
-        print 'Vcom = %g' % vcom
-        fh.write('Vcom = %g\n' % vcom)
-        # raw_input('Configure Bal uns to : %s' % balun)
-        #     for i in range(1):
+    # balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
+    # balunList = ('S')
+    for temp in templist:
+    # for balun in balunList:
+        setTemp(temp)
+        # fh.write('Balun config = %s' % balun)
+        fh.write('Temp = %d' % temp)
+        fh.write('\n')
+        for vcom in vcomlist:
+            Supply.__SetV__(vcom, 3)  # Sets DUT to common mode voltage
+            print 'Vcom = %g' % vcom
+            fh.write('Vcom = %g\n' % vcom)
+            # raw_input('Configure Bal uns to : %s' % balun)
+            #     for i in range(1):
 
-        IMD3()  # Runs main IMD measurements
+            IMD3()  # Runs main IMD measurements
 
-# Final clean up actions
-Oven.__SetTemp__(25)
-print (time.time()-startTime)
-fh.write('Execution time (s) = %g' % (time.time() - startTime))
+    # Final clean up actions
+    Oven.__SetTemp__(25)
+    print (time.time()-startTime)
+    fh.write('Execution time (s) = %g' % (time.time() - startTime))
+
+if __name__ == '__main__':
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\IMD3\\'
+    # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
+    freqs = [1e9]
+    # vcoms = []
+    # for i in range(20, 31):
+    #     vcoms.append(i/10.0)
+    # vcoms = [2.0, 2.5, 3.0]
+    vcoms = [2.5]
+    # temps = [25, 85, -40]
+    temps = [25]
+    dut = 0
+
+    IMD3main(path, freqs, vcoms, temps, dut)  # Calls main program
 
