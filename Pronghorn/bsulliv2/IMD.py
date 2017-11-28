@@ -3,7 +3,7 @@
 
 # Module and instrument imports
 import sys, visa, time
-sys.path.append('../Common')
+sys.path.append('../../Common')
 from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
 from ADI_GPIB.AgilentN6705B import *
@@ -17,7 +17,7 @@ Analyzer = AgilentN9030A(18)
 Oven = WatlowF4(4)
 startTime = time.time()
 
-def IMD3main():
+def IMD3main(path, freqlist, vcomlist, templist, dut):
     # Main IMD measurement program
     def IMD3():
         # Initializes spectrum analyzer for measurements
@@ -137,7 +137,6 @@ def IMD3main():
 
         # Print first line of file
     def header():
-        dut = '3-4'
         test = 'IMD3'
         equipment = 'N5181A N9030A BAL0026 BAL006'
         # supplyV = Supply.__MeasP25V__()
@@ -166,8 +165,8 @@ def IMD3main():
 
     # Initializes and opens output file
     date = time.ctime(time.time())
-    date = date.replace(':', '.')
-    fh = open('Intermod_Dist_' + date + '.csv', 'w')
+    date = date.replace(':', '-')
+    fh = open(path + 'Intermod_Dist_' + date + '.csv', 'w')
 
     header()    # Prints first line of file
 

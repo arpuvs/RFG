@@ -13,7 +13,7 @@ from ADI_GPIB.WatlowF4 import *
 # PyQT and IMD3 import
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from IMD import IMD3Main
+from IMD import IMD3main
 
 class IMDGUI(QMainWindow):
     def __init__(self):
@@ -177,61 +177,61 @@ class IMDGUI(QMainWindow):
 
         error = 'Invlaid input'  # Default error message
 
-        try:
-            # Collect input from line prompts
-            dut = self.dutPrompt.text()
-            path = self.fileLine.text()
-            temps = str(self.tempLine.text()).split()
-            freqs = str(self.freqLine.text()).split()
-            vcoms = str(self.vcomLine.text()).split()
+        # try:
+        # Collect input from line prompts
+        dut = self.dutPrompt.text()
+        path = self.fileLine.text()
+        temps = str(self.tempLine.text()).split()
+        freqs = str(self.freqLine.text()).split()
+        vcoms = str(self.vcomLine.text()).split()
 
-            # Converts and constrains temperature input
-            for index in range(len(temps)):
-                temps[index] = float(temps[index].strip(','))
-                if (temps[index] < -40) | (temps[index] > 125):
-                    error = 'Temperature out of range'
+        # Converts and constrains temperature input
+        for index in range(len(temps)):
+            temps[index] = float(temps[index].strip(','))
+            if (temps[index] < -40) | (temps[index] > 125):
+                error = 'Temperature out of range'
+                raise Exception
+
+        # Converts and constrains frequency input
+        for index in range(len(freqs)):
+            freqs[index] = float(freqs[index].strip(','))
+            if (freqs[index] < 0) | (freqs[index] > 6e9):
+                error = 'Frequency out of range'
+                raise Exception
+
+            # Converts frequency given to filter box format
+            if (freqs[index] >= 1e6) & (freqs[index] < 1e9):
+                freqs[index] = '%g MHz' % (freqs[index]/1.0e6)
+            elif freqs[index] >= 1e9:
+                freqs[index] = '%g GHz' % (freqs[index]/1.0e9)
+            print freqs[index]
+
+            # Cross references dictionary to find relevant frequency
+            for key in fmbDict:
+                if fmbDict[key] == freqs[index]:
+                    freqs[index] = key
+                    break
+                if key >= len(fmbDict):
+                    error = 'Frequency not in filter box'
                     raise Exception
 
-            # Converts and constrains frequency input
-            for index in range(len(freqs)):
-                freqs[index] = float(freqs[index].strip(','))
-                if (freqs[index] < 0) | (freqs[index] > 6e9):
-                    error = 'Frequency out of range'
-                    raise Exception
+        # Converts and constrains common mode voltages
+        for index in range(len(vcoms)):
+            vcoms[index] = float(vcoms[index].strip(','))
+            if (vcoms[index] < 2) | (vcoms[index] > 3):
+                error = 'Vcom out of range'
+                raise Exception
 
-                # Converts frequency given to filter box format
-                if (freqs[index] >= 1e6) & (freqs[index] < 1e9):
-                    freqs[index] = '%g MHz' % (freqs[index]/1.0e6)
-                elif freqs[index] >= 1e9:
-                    freqs[index] = '%g GHz' % (freqs[index]/1.0e9)
-                print freqs[index]
+        print'DUT # = %s' % dut
+        print'Temp = %s' % temps
+        print'Freq = %s' % freqs
 
-                # Cross references dictionary to find relevant frequency
-                for key in fmbDict:
-                    if fmbDict[key] == freqs[index]:
-                        freqs[index] = key
-                        break
-                    if key >= len(fmbDict):
-                        error = 'Frequency not in filter box'
-                        raise Exception
+        IMD3main(path, freqs, vcoms, temps, dut)  # Main program call
 
-            # Converts and constrains common mode voltages
-            for index in range(len(vcoms)):
-                vcoms[index] = float(vcoms[index].strip(','))
-                if (vcoms[index] < 2) | (vcoms[index] > 3):
-                    error = 'Vcom out of range'
-                    raise Exception
+        print 'Done!'
 
-            print'DUT # = %s' % dut
-            print'Temp = %s' % temps
-            print'Freq = %s' % freqs
-
-            IMD3Main(path, freqs, vcoms, temps, dut)  # Main program call
-
-            print 'Done!'
-
-        except:
-            print error  # If execution fails print determined cause
+        # except:
+        #     print error  # If execution fails print determined cause
 
 
 
