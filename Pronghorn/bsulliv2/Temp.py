@@ -59,11 +59,16 @@ Analyzer = AgilentN9030A(18)
 # print Oven.__GetTemp__()
 # print Oven.__GetSP__()
 
-print Analyzer.__ClearAverage__()
-print Analyzer.__SetAverage__(50)
-print time.sleep(1)
-print Analyzer.__CheckStatus__(600)
+# print Analyzer.__ClearAverage__()
+# print Analyzer.__SetAverage__(50)
+# print time.sleep(1)
+# print Analyzer.__CheckStatus__(600)
 
+# print Analyzer.__Align__()
+# print Analyzer.__CheckStatus__(600)
+print Analyzer.__CheckStatus__(30)
+Analyzer.__Align__()
+print Analyzer.__CheckStatus__(300)
 
 
 # date = time.ctime(time.time())

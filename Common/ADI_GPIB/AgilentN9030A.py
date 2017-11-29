@@ -54,11 +54,18 @@ class AgilentN9030A(GPIBObjectBaseClass):
     def __ClearAverage__(self):
         self.instr.write(':AVER:CLE')
 
+    def __Align__(self):
+        self.instr.write(':CAL')
+
+    def __SetBW__(self, bw):
+        self.instr.write(':BAND %d' % bw)
+
     def __CheckStatus__(self, maxWait):
         endtime = time.time() + maxWait
         while True:
             try:
                 return self.instr.ask('*OPC?')
+                break
             except:
                 time.sleep(0.1)
                 if time.time() > endtime:

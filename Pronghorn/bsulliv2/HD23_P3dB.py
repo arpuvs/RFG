@@ -3,8 +3,8 @@
 
 # Necessary module and instrument imports
 import sys, visa, time
-sys.path.append('../../../Common')
-sys.path.append('../../../Common/FMB_USB_Python_Files')
+sys.path.append('../../Common')
+sys.path.append('../../Common/FMB_USB_Python_Files')
 from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
 from ADI_GPIB.AgilentN6705B import *
@@ -26,7 +26,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     def HD23():  # Main HD23 measurement function
         # Initializes analyzer
         Analyzer.__SetSpan__(10e3)
-        Analyzer.__SetAverage__(100)
+        Analyzer.__SetAverage__(50)
 
         # Initializes all measurement arrays
         fundamental = []
@@ -50,11 +50,11 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             freqlistReal.append(freq)
 
             # Sets up all equipment for given frequency
+            Filter.select_filter(freqindex)
             Source.__SetFreq__(freq)
             Analyzer.__Setfc__(freq)
-            Analyzer.__SetMarkerFreq__(1, freq)
             Source.__SetState__(1)
-            Filter.select_filter(freqindex)
+            Analyzer.__SetMarkerFreq__(1, freq)
             time.sleep(0.1)
             Analyzer.__ClearAverage__()
 
@@ -72,15 +72,16 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
                 carrierMag = float(Analyzer.__GetMarkerAmp__(1))
 
             # Gets final amplitude
-            Carrier.append(float(Analyzer.__GetMarkerAmp__(1)))
+            Carrier.append(carrierMag)
+            fundamental.append(carrierMag)
             SourceAmp.append(float(Source.__GetAmp__()))
 
             # Makes fundamental, second and third harmonic measurements
-            Analyzer.__Setfc__(freq)
-            Analyzer.__SetMarkerFreq__(1, freq)
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            fundamental.append(float(Analyzer.__GetMarkerAmp__(1)))
+            # Analyzer.__Setfc__(freq)
+            # Analyzer.__SetMarkerFreq__(1, freq)
+            # Analyzer.__ClearAverage__()
+            # Analyzer.__CheckStatus__(300)
+            # fundamental.append(float(Analyzer.__GetMarkerAmp__(1)))
             Analyzer.__Setfc__(freq*2.0)
             Analyzer.__SetMarkerFreq__(1, freq*2.0)
             Analyzer.__ClearAverage__()
@@ -125,7 +126,8 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     # Probably needs to be modified to actually use.
     def P3dB(freq):
         Analyzer.__SetSpan__(10e3)
-        Analyzer.__SetAverage__(50)
+        Analyzer.__SetBW__(91)
+        Analyzer.__SetAverage__(100)
         Analyzer.__Setfc__(freq)
         Analyzer.__SetMarkerFreq__(1, freq)
         Source.__SetFreq__(freq)
@@ -263,6 +265,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     Supply.__SetI__(0.25, 1)
 
 
+
     # balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
     # balunList = ('S')
     for temp in templist:
@@ -274,6 +277,12 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             Supply.__SetV__(vcom, 3)        # Sets DUT to common mode voltage
             print 'Vcom = %g' % vcom
             fh.write('Vcom = %g\n' % vcom)
+            Source.__SetState__(0)
+            print 'Aligning...'
+            Analyzer.__CheckStatus__(300)
+            Analyzer.__Align__()            # Aligns device with no input
+            Analyzer.__CheckStatus__(300)
+            print 'Done'
             HD23()                          # Runs main HD23 measurement
 
     # Returns oven to ambient temp, finds execution time and closes file
@@ -290,8 +299,8 @@ if __name__ == '__main__':
     # Sets all necessary variables
     path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\HD23\\'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
-    # freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16]
-    freqs = [12]
+    freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    # freqs = [12]
     # vcoms = []
     # for i in range(20, 31):
     #     vcoms.append(i/10.0)
