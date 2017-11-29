@@ -152,7 +152,7 @@ class HDGUI(QMainWindow):
             self.freqLine.setText('4e9')
         elif button == self.freqSweepDef:
             self.freqLine.setText('1.20E+08, 2.253E+08, 5.00E+08, 1.00E+09, 1.50E+09, 2.00E+09, '
-                                  '2.50E+09, 3.00E+09, 3.50E+09, 4.00E+09')
+                                  '2.50E+09, 3.00E+09, 3.50E+09, 4.00E+09, 4.5e9, 5.0e9, 5.5e9, 5.9e9')
         elif button == self.tempDef:
             self.tempLine.setText('25')
         elif button == self.tempSweepDef:
@@ -227,12 +227,14 @@ class HDGUI(QMainWindow):
             print'Temp = %s' % temps
             print'Freq = %s' % freqs
 
-            HD23Main(path, freqs, vcoms, temps, dut)  # Main program call
+            # HD23Main(path, freqs, vcoms, temps, dut)  # Main program call
 
             print 'Done!'
 
         except:
             print error  # If execution fails print determined cause
+
+        HD23Main(path, freqs, vcoms, temps, dut)  # Main program call
 
 
         # HD23(self.dutPrompt.text(), self.tempLine.text(), self.freqLine.text(), self.fileLine.text())

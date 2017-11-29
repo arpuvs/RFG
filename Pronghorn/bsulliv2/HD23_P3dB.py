@@ -64,7 +64,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             while abs(carrierMag - -2) >= 0.1:                # Adjusts amplitude until it is within 0.1 dBm of desired
                 sourceAmp = float(Source.__GetAmp__())
                 setAmp = sourceAmp + (-2 - carrierMag)
-                if setAmp > 20:
+                if setAmp > 12:
                     raise Exception('Max source amplitude exceeded')
                 Source.__SetAmp__(setAmp)
                 Analyzer.__ClearAverage__()
@@ -161,7 +161,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             gain = amp - dutAmp
             print 'Difference = %g' % abs(gain - initGain)
             print sourceAmp
-            if sourceAmp >= 20:
+            if sourceAmp >= 12:
                 raise Exception('Amplitude too high, check configuration')
 
         sourceAmp = sourceAmp - (inc + 1)
@@ -183,7 +183,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             gain = amp - dutAmp
             print 'Difference = %g' % abs(gain - initGain)
             print sourceAmp
-            if sourceAmp >= 15:
+            if sourceAmp >= 12:
                 raise Exception('Amplitude too high, check configuration')
 
         sourceAmp = sourceAmp - (inc + 0.2)
@@ -204,7 +204,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             gain = amp - dutAmp
             print 'Difference = %g' % abs(gain - initGain)
             print sourceAmp
-            if sourceAmp >= 15:
+            if sourceAmp >= 12:
                 raise Exception('Amplitude too high, check configuration')
 
         # fh.write(amp)
@@ -266,7 +266,8 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     # balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
     # balunList = ('S')
     for temp in templist:
-        setTemp(temp)                       # Sets DUT to temperature
+        if templist != [25]:
+            setTemp(temp)                       # Sets DUT to temperature
         fh.write('Temp = %d' % temp)
         fh.write('\n')
         for vcom in vcomlist:
@@ -276,10 +277,12 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             HD23()                          # Runs main HD23 measurement
 
     # Returns oven to ambient temp, finds execution time and closes file
-    setTemp(25)
+    if templist != [25]:
+        setTemp(25)
     print time.time()-startTime
     fh.write('Execution time (s) = %g' % (time.time() - startTime))
     fh.close()
+    print 'Done!'
 
 
 # Called if program run by itself
