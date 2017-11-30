@@ -4,7 +4,7 @@ sys.path.append('../../Common')
 # # C:\Git_Repositories\RFG\Common\FMB_USB_Python_Files
 # from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
-# from ADI_GPIB.WatlowF4 import *
+from ADI_GPIB.WatlowF4 import *
 # # from ADI_GPIB.AgilentN6705B import *
 # from FMB import *
 #
@@ -52,12 +52,12 @@ from ADI_GPIB.AgilentN9030A import *
 # Supply = AgilentN6705B(26)
 # Source1 = AgilentN5181A(20)
 # Source2 = AgilentN5181A(11)
-Analyzer = AgilentN9030A(18)
-# Oven = WatlowF4(4)
+# Analyzer = AgilentN9030A(18)
+Oven = WatlowF4(4)
 # #
 #
-# print Oven.__GetTemp__()
-# print Oven.__GetSP__()
+print Oven.__GetTemp__()
+print Oven.__GetSP__()
 
 # print Analyzer.__ClearAverage__()
 # print Analyzer.__SetAverage__(50)
@@ -66,9 +66,9 @@ Analyzer = AgilentN9030A(18)
 
 # print Analyzer.__Align__()
 # print Analyzer.__CheckStatus__(600)
-print Analyzer.__CheckStatus__(30)
-Analyzer.__Align__()
-print Analyzer.__CheckStatus__(300)
+# print Analyzer.__CheckStatus__(30)
+# Analyzer.__Align__()
+# print Analyzer.__CheckStatus__(300)
 
 
 # date = time.ctime(time.time())

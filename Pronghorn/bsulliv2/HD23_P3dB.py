@@ -287,7 +287,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
 
     # Returns oven to ambient temp, finds execution time and closes file
     if templist != [25]:
-        setTemp(25)
+        Oven.__SetTemp__(25)
     print time.time()-startTime
     fh.write('Execution time (s) = %g' % (time.time() - startTime))
     fh.close()

@@ -22,7 +22,7 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
     def IMD3():
         # Initializes spectrum analyzer for measurements
         Analyzer.__SetSpan__(10e3)
-        Analyzer.__SetAverage__(100)
+        Analyzer.__SetAverage__(50)
 
         # Initializes arrays
         lowerPeak = []
@@ -72,12 +72,13 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
             carrierMag = float(Analyzer.__GetMarkerAmp__(1))
             while abs(carrierMag - -8) >= 0.1:
                 sourceAmp = float(Source2.__GetAmp__())
-                Source2.__SetAmp__(sourceAmp + (-8 - carrierMag))
+                setAmp = sourceAmp + (-8 - carrierMag)
+                if setAmp >= 15:
+                    raise Exception('Amplitude too high, check configuration')
+                Source2.__SetAmp__(setAmp)
                 Analyzer.__ClearAverage__()
                 Analyzer.__CheckStatus__(300)
                 carrierMag = float(Analyzer.__GetMarkerAmp__(1))
-                if sourceAmp >= 15:
-                    raise Exception('Amplitude too high, check configuration')
             highCarrier.append(float(Analyzer.__GetMarkerAmp__(1)))
             higherSourceAmp.append(float(Source2.__GetAmp__()))
 
@@ -107,8 +108,8 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
 
 
         # Writes all results to output file
-        fh.write('Test %d' % i)
-        fh.write('\n')
+        # fh.write('Test %d' % i)
+        # fh.write('\n')
         fh.write('Frequency:,')
         fh.write(str(freqlist).strip('[]'))
         fh.write('\n')
@@ -133,7 +134,6 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
         fh.write('Right dBc:,')
         fh.write(str(rightNormal).strip('[]'))
         fh.write('\n')
-        print 'Left normal = %g' % leftNormal
 
         # Print first line of file
     def header():
@@ -180,12 +180,22 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
     # balunList = ('S')
     for temp in templist:
     # for balun in balunList:
-        setTemp(temp)
+        if templist != [25]:
+            setTemp(temp)
         # fh.write('Balun config = %s' % balun)
         fh.write('Temp = %d' % temp)
         fh.write('\n')
         for vcom in vcomlist:
             Supply.__SetV__(vcom, 3)  # Sets DUT to common mode voltage
+
+            Source1.__SetState__(0)
+            Source2.__SetState__(0)
+            print 'Aligning...'
+            Analyzer.__CheckStatus__(300)
+            Analyzer.__Align__()  # Aligns device with no input
+            Analyzer.__CheckStatus__(300)
+            print 'Done'
+
             print 'Vcom = %g' % vcom
             fh.write('Vcom = %g\n' % vcom)
             # raw_input('Configure Bal uns to : %s' % balun)
@@ -194,14 +204,15 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
             IMD3()  # Runs main IMD measurements
 
     # Final clean up actions
-    Oven.__SetTemp__(25)
+    if templist != [25]:
+        Oven.__SetTemp__(25)
     print (time.time()-startTime)
     fh.write('Execution time (s) = %g' % (time.time() - startTime))
 
 if __name__ == '__main__':
     path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\IMD3\\'
-    # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
-    freqs = [1e9]
+    freqs = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9, 4.5e9, 5.0e9, 5.5e9, 5.9e9]
+    # freqs = [6e9]
     # vcoms = []
     # for i in range(20, 31):
     #     vcoms.append(i/10.0)
@@ -209,7 +220,7 @@ if __name__ == '__main__':
     vcoms = [2.5]
     # temps = [25, 85, -40]
     temps = [25]
-    dut = 0
+    dut = '4-3'
 
     IMD3main(path, freqs, vcoms, temps, dut)  # Calls main program
 

@@ -168,12 +168,6 @@ class IMDGUI(QMainWindow):
 
     def runProgram(self):
         # Filter box dictionary
-        fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
-                   5: "120 MHz", 6: "225.3 MHz", 7: "350.3 MHz", 8: "500 MHz",
-                   9: "800.3 MHz", 10: "1 GHz", 11: "1.5 GHz", 12: "2 GHz",
-                   13: "2.5 GHz", 14: "3 GHz", 15: "3.5 GHz", 16: "4 GHz",
-                   17: "4.5 GHz", 18: "5 GHz", 19: "5.5 GHz", 20: "5.9 GHz",
-                   21: "Aux"}
 
         error = 'Invlaid input'  # Default error message
 
@@ -195,25 +189,9 @@ class IMDGUI(QMainWindow):
         # Converts and constrains frequency input
         for index in range(len(freqs)):
             freqs[index] = float(freqs[index].strip(','))
-            if (freqs[index] < 0) | (freqs[index] > 6e9):
+            if (freqs[index] < 0) | (freqs[index] >= 6e9):
                 error = 'Frequency out of range'
                 raise Exception
-
-            # Converts frequency given to filter box format
-            if (freqs[index] >= 1e6) & (freqs[index] < 1e9):
-                freqs[index] = '%g MHz' % (freqs[index]/1.0e6)
-            elif freqs[index] >= 1e9:
-                freqs[index] = '%g GHz' % (freqs[index]/1.0e9)
-            print freqs[index]
-
-            # Cross references dictionary to find relevant frequency
-            for key in fmbDict:
-                if fmbDict[key] == freqs[index]:
-                    freqs[index] = key
-                    break
-                if key >= len(fmbDict):
-                    error = 'Frequency not in filter box'
-                    raise Exception
 
         # Converts and constrains common mode voltages
         for index in range(len(vcoms)):
