@@ -132,7 +132,8 @@ def header():
     supplyI = 'Temp'
     print supplyI
     balun = 'INB: 0-VIN OUTB 0-VOP'
-    header = (dut, date, test, equipment, supplyV, supplyI, balun)
+    channel = 'B'
+    header = (dut, date, test, equipment, supplyV, supplyI, balun, channel)
     header = str(header).strip('()')
     fh.write(header)
     fh.write('\n')
