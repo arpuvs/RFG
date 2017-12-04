@@ -3,8 +3,7 @@ import sys, visa, time
 sys.path.append('../../Common')
 # # C:\Git_Repositories\RFG\Common\FMB_USB_Python_Files
 # from ADI_GPIB.AgilentN5181A import *
-from ADI_GPIB.AgilentN9030A import *
-from ADI_GPIB.WatlowF4 import *
+# from ADI_GPIB.AgilentN9030A import *
 # # from ADI_GPIB.AgilentN6705B import *
 # from FMB import *
 #
@@ -53,11 +52,73 @@ from ADI_GPIB.WatlowF4 import *
 # Source1 = AgilentN5181A(20)
 # Source2 = AgilentN5181A(11)
 # Analyzer = AgilentN9030A(18)
-Oven = WatlowF4(4)
+# Oven = WatlowF4(4)
+# # #
 # #
+# print Oven.__GetTemp__()
+# print Oven.__GetSP__()
+from ADI_GPIB.WatlowF4 import *
+from ADI_GPIB.AgilentE5071C import *
+from ADI_GPIB.KeysightN5242A import *
+
+# VNA = AgilentE5071C(17)
+Oven = WatlowF4(4)
+VNA = KeysightN5424A(17)
+
+# def meas():
+#     VNA.__InitMeas__(1)
+#     VNA.__SingleTrig__()    # Causes error - Unidentified header
+#     status = 0
+#     while status == 0:
+#         status = VNA.__CheckStatus__()
+#         time.sleep(0.1)
+#     ans = VNA.__GetData__(1)    # Causes error
+#     print ans
+#     ans = ans.split(',')
+#     magans = []
+#     imagans = []
+#     for val in range(len(ans)):
+#         if (val % 2) == 0:
+#             magans.append(float(ans[val]))
+#         else:
+#             imagans.append(float(ans[val]))
 #
-print Oven.__GetTemp__()
-print Oven.__GetSP__()
+#     compans = []
+#     for val in range(len(magans)):
+#         compans.append(magans[val] + imagans[val] * 1j)
+#
+#     # return compans
+#     return magans, imagans
+#
+# VNA.__SetSweepType__(1, 'LOG')
+# VNA.__SetStartf__(1, 10e06)
+# VNA.__SetStopf__(1, 10.01e09)
+# VNA.__SetNumPoints__(1, 1e3)
+# VNA.__SetAvg__(1, 16)
+# VNA.__SetAutoTime__(1, True)
+# VNA.__SetTrigType__('MAN')
+# VNA.__SetContinuous__(1, False)
+# VNA.__EnableAvg__(1, True)
+# # VNA.__EnableTrigAvg__(True)     # Causes error - Unidentified header
+#
+VNA.__SetActiveTrace__(1, 1)
+# VNA.__SetBalBal__(1, 'Bal-Bal')
+# VNA.__SetBBalParam__(1, 1, 'SCC21')
+# VNA.__SetActiveFormat__(1, 'MLOG')
+# scc21_mlog = meas()
+
+VNA.__SetTopology__(1, 'BBAL')
+VNA.__SetBBalParam__(1, 1, 'SCC21')
+VNA.__SetBBalParam__(1, 1, 'SDD11')
+
+# VNA.instr.write('CALC1:FSIM:BAL:PAR:BBAL SDD11')
+
+
+# print VNA.instr.ask('CALC:PAR:CAT?')
+# VNA.__SetActiveTrace__(1, 1)    # Causes error - Missing parameter
+# ans = VNA.__GetData__(1)    # Causes error
+# print ans
+
 
 # print Analyzer.__ClearAverage__()
 # print Analyzer.__SetAverage__(50)
