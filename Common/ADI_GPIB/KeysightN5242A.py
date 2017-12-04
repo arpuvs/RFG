@@ -96,6 +96,9 @@ class KeysightN5424A(GPIBObjectBaseClass):
     def __EnableBal__(self, channel):
         self.instr.write(':CALC:FSIM:BAL:PAR:STAT 1')
 
+    def __GetFreq__(self, channel):
+        return self.instr.ask('CALC%d:X?' % channel)
+
 
     def __GetData__(self, channel):  # Can't find on PXA**
         return self.instr.ask("CALC%d:DATA? FDATA" % channel)

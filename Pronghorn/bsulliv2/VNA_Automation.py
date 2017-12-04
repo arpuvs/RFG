@@ -23,7 +23,7 @@ def VNAinit():
     VNA.__EnableAvg__(1, True)
     # VNA.__EnableTrigAvg__(True)
     VNA.__SetTopology__(1, 'BBAL')
-    VNA.__SetPorts__(1, 1, 2, 3, 4)
+    VNA.__SetPorts__(1, 1, 3, 2, 4)
     VNA.__EnableBal__(1)
 
 
@@ -85,7 +85,9 @@ def build_cmrr(sdd21, sdc21):
 
 def build_gdel(phase, freq):
     ans = []
-    ans[0] = 0
+    ans.append(0)
+    # print len(phase)
+    # print len(freq)
     for val in range(len(phase) - 1):
         ans.append(((phase[val+1] - phase[val])*math.pi/180.0)/(freq[val+1]-freq[val]))
     return ans
@@ -149,6 +151,14 @@ def getData():
     VNA.__SetBBalParam__(1, 1, 'SDD11')
     VNA.__SetActiveFormat__(1, 'POL')
     sdd11_pol = meas()
+    sdd11_pol1 = []
+    sdd11_pol2 = []
+    for i in range(len(sdd11_pol)):
+        if i % 2:
+            sdd11_pol1.append(sdd11_pol[i])
+        else:
+            sdd11_pol2.append(sdd11_pol[i])
+    sdd11_pol = [sdd11_pol1, sdd11_pol2]
 
     VNA.__SetBBalParam__(1, 1, 'SDD12')
     VNA.__SetActiveFormat__(1, 'MLOG')
@@ -165,6 +175,14 @@ def getData():
     VNA.__SetBBalParam__(1, 1, 'SDD22')
     VNA.__SetActiveFormat__(1, 'POL')
     sdd21_pol = meas()
+    sdd21_pol1 = []
+    sdd21_pol2 = []
+    for i in range(len(sdd21_pol)):
+        if i % 2:
+            sdd21_pol1.append(sdd21_pol[i])
+        else:
+            sdd21_pol2.append(sdd21_pol[i])
+    sdd21_pol = [sdd21_pol1, sdd21_pol2]
 
     VNA.__SetBBalParam__(1, 1, 'SDD11')
     VNA.__SetActiveFormat__(1, 'MLOG')
@@ -174,18 +192,25 @@ def getData():
     VNA.__SetActiveFormat__(1, 'MLOG')
     sdd22_mlog = meas()
 
+    # freqlist = []
+    # freqlist.append(startFreq)
+    # for i in (range(int(numPoints) - 1)):
+    #     freqlist.append(freqlist[i] + ((endFreq-startFreq)/numPoints))
+    freqlist = VNA.__GetFreq__(1)
+    freqlist = freqlist.split(',')
+    # print freqlist
+    for val in range(len(freqlist)):
+        freqlist[val] = float(freqlist[val])
+
     av = build_av(sdd21_mlog)
     cmrr1 = build_cmrr(sdd21_mlog, sdc21_mlog)
     cmrr2 = build_cmrr(sdd21_mlog, scc21_mlog)
-    # group_delay = build_gdel(sdd21_pol, freqlist)
-    # s12_v = build_av(sdd12_mlog)
+    group_delay = build_gdel(sdd21_pol[0], freqlist)
+    s12_v = build_av(sdd12_mlog)
     # zyIn = build_zy(sdd11_mlog)
     # zyOut = build_zy(sdd22_mlog)
 
-    freqlist = []
-    freqlist.append(startFreq)
-    for i in (range(numPoints - 1)):
-        freqlist.append(freqlist[i] + ((endFreq-startFreq)/numPoints))
+
 
     fh.write('Frequency,')
     fh.write(str(freqlist).strip('[]'))
@@ -196,8 +221,11 @@ def getData():
     fh.write('SDC21 MLOG,')
     fh.write(str(sdc21_mlog).strip('[]'))
     fh.write('\n')
-    fh.write('SDD11 POL,')
-    fh.write(str(sdd11_pol).strip('[]'))
+    fh.write('SDD11 POL 1,')
+    fh.write(str(sdd11_pol[0]).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD11 POL 2,')
+    fh.write(str(sdd11_pol[1]).strip('[]'))
     fh.write('\n')
     fh.write('SDD12 MLOG,')
     fh.write(str(sdd12_mlog).strip('[]'))
@@ -208,8 +236,11 @@ def getData():
     fh.write('SDD21 MLOG,')
     fh.write(str(sdd21_mlog).strip('[]'))
     fh.write('\n')
-    fh.write('SDD21 POL,')
-    fh.write(str(sdd21_pol).strip('[]'))
+    fh.write('SDD21 POL 1,')
+    fh.write(str(sdd21_pol[0]).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 POL 2,')
+    fh.write(str(sdd21_pol[1]).strip('[]'))
     fh.write('\n')
     fh.write('SDD11 MLOG,')
     fh.write(str(sdd11_mlog).strip('[]'))
@@ -225,6 +256,12 @@ def getData():
     fh.write('\n')
     fh.write('CMRR2, ')
     fh.write(str(cmrr2).strip('[]'))
+    fh.write('\n')
+    fh.write('Group Delay,')
+    fh.write(str(group_delay).strip('[]'))
+    fh.write('\n')
+    fh.write('S12_V,')
+    fh.write(str(s12_v).strip('[]'))
     fh.write('\n')
 
 def header():
@@ -263,7 +300,8 @@ fh = open(path + 'Intermod_Dist_' + date + '.csv', 'w')
 
 Zin_diff = 100
 Zout_diff = 100
-avg = 3
+avg = 16
+
 numPoints = 1000.0
 startFreq = 10e6
 endFreq = 10.01e9
