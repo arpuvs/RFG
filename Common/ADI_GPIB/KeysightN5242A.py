@@ -99,6 +99,29 @@ class KeysightN5424A(GPIBObjectBaseClass):
     def __GetFreq__(self, channel):
         return self.instr.ask('CALC%d:X?' % channel)
 
+    def __LoadState__(self, fname='default.csa'):
+        self.instr.write('MMEM:LOAD \"%s\"' % fname)
+
+    def __AddWindow__(self, window):
+        self.instr.write('DISP:WIND%d ON' % window)
+
+    def __AddMeas__(self, channel, name, meastype):
+        # meastypes: S11,S21..., Gain Compression, Gain Compression Converters, Noise Figure Cold Source,
+        # Noise Figure Converters, Swept IMD, Swept IMD Converters, IM Spectrum, IMx Specrtrum Converters,
+        # Differential I/Q
+        self.instr.write('CALC%d:CUST:DEF \'%s\', \'%s\'' % (channel, name, meastype))
+
+    def __AddTrace__(self, window, trace, name):
+        self.instr.write('DISP:WIND%d:TRAC%d:FEED \'%s\'' % (window, trace, name))
+
+    def __IMDDelta__(self, channel, spacing):
+        self.instr.write('SENS%d:IMD:FREQDFR %g' % (channel, spacing))
+
+    def __IMDStart__(self, channel, frequency):
+        self.instr.write('SENS%d:IMD:FREQ:FCEN:STAR %g' % (channel, frequency))
+
+    def __IMDStop__(self, channel, frequency):
+        self.instr.write('SENS%d:IMD:FREQ:FCEN:STOP %g' % (channel, frequency))
 
     def __GetData__(self, channel):  # Can't find on PXA**
         return self.instr.ask("CALC%d:DATA? FDATA" % channel)

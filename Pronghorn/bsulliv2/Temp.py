@@ -57,14 +57,85 @@ sys.path.append('../../Common')
 # #
 # print Oven.__GetTemp__()
 # print Oven.__GetSP__()
-from ADI_GPIB.WatlowF4 import *
-from ADI_GPIB.AgilentE5071C import *
+# from ADI_GPIB.WatlowF4 import *
+# from ADI_GPIB.AgilentE5071C import *
 from ADI_GPIB.KeysightN5242A import *
 
 # VNA = AgilentE5071C(17)
-Oven = WatlowF4(4)
+# Oven = WatlowF4(4)
 VNA = KeysightN5424A(17)
 
+VNA.__LoadState__('default.csa')
+VNA.__SetSweepType__(1, 'LOG')
+VNA.__SetStartf__(1, 10e6)
+VNA.__SetStopf__(1, 10.01e9)
+VNA.__SetNumPoints__(1, 1e3)
+VNA.__SetAvg__(1, 1)
+VNA.__SetAutoTime__(1, True)
+VNA.__SetTrigType__('MAN')
+VNA.__SetContinuous__(1, False)
+VNA.__EnableAvg__(1, True)
+# VNA.__EnableTrigAvg__(True)
+VNA.__SetTopology__(1, 'BBAL')
+VNA.__SetPorts__(1, 1, 3, 2, 4)
+VNA.__EnableBal__(1)
+VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
+VNA.__SetActiveTrace__(1, 1)
+
+#
+VNA.__AddWindow__(2)
+VNA.__AddMeas__(2, 'P1dB', 'Gain Compression')
+VNA.__AddTrace__(2, 1, 'P1dB')
+VNA.__SetSweepType__(2, 'LOG')
+VNA.__SetStartf__(2, 10e6)
+VNA.__SetStopf__(2, 10.01e9)
+VNA.__SetNumPoints__(2, 1e3)
+VNA.__SetAvg__(2, 1)
+VNA.__SetAutoTime__(2, True)
+# VNA.__SetTrigType__('MAN')
+VNA.__SetContinuous__(2, False)
+VNA.__EnableAvg__(2, True)
+# VNA.__EnableTrigAvg__(True)
+VNA.__SetTopology__(2, 'BBAL')
+VNA.__SetPorts__(2, 1, 3, 2, 4)
+VNA.__EnableBal__(2)
+
+VNA.__AddWindow__(3)
+VNA.__AddMeas__(3, 'NF', 'Noise Figure Cold Source')
+VNA.__AddTrace__(3, 1, 'NF')
+VNA.__SetStartf__(3, 10e6)
+VNA.__SetStopf__(3, 10.01e9)
+VNA.__SetNumPoints__(3, 1e3)
+VNA.__SetAvg__(3, 1)
+VNA.__SetAutoTime__(3, True)
+VNA.__SetTrigType__('MAN')
+VNA.__SetContinuous__(3, False)
+VNA.__EnableAvg__(3, True)
+# VNA.__EnableTrigAvg__(True)
+VNA.__SetTopology__(3, 'BBAL')
+VNA.__SetPorts__(3, 1, 3, 2, 4)
+VNA.__EnableBal__(3)
+
+VNA.__AddWindow__(4)
+VNA.__AddMeas__(4, 'IMD', 'Swept IMD')
+VNA.__AddTrace__(4, 1, 'IMD')
+VNA.__IMDDelta__(4, 2e6)    # Undefined header
+VNA.__IMDStart__(4, 10e6)   # Parameter not valid
+VNA.__IMDStop__(4, 10.01e9) # Parameter not valid
+VNA.__SetStartf__(4, 10e6)
+VNA.__SetStopf__(4, 10.01e9)
+VNA.__SetNumPoints__(4, 1e3)
+VNA.__SetAvg__(4, 1)
+VNA.__SetAutoTime__(4, True)
+VNA.__SetTrigType__('MAN')
+VNA.__SetContinuous__(4, False)
+VNA.__EnableAvg__(4, True)
+# VNA.__EnableTrigAvg__(True)
+VNA.__SetTopology__(4, 'BBAL')
+VNA.__SetPorts__(4, 1, 3, 2, 4)
+VNA.__EnableBal__(4)
+
+# VNA.instr.write('CALC1:CUST:DEF \'P1dB\', \'Gain Compression\' ')
 # def meas():
 #     VNA.__InitMeas__(1)
 #     VNA.__SingleTrig__()    # Causes error - Unidentified header
@@ -101,15 +172,17 @@ VNA = KeysightN5424A(17)
 # VNA.__EnableAvg__(1, True)
 # # VNA.__EnableTrigAvg__(True)     # Causes error - Unidentified header
 #
-VNA.__SetActiveTrace__(1, 1)
+# VNA.__SetActiveTrace__(1, 1)
 # VNA.__SetBalBal__(1, 'Bal-Bal')
 # VNA.__SetBBalParam__(1, 1, 'SCC21')
 # VNA.__SetActiveFormat__(1, 'MLOG')
 # scc21_mlog = meas()
 
-VNA.__SetTopology__(1, 'BBAL')
-VNA.__SetBBalParam__(1, 1, 'SCC21')
-VNA.__SetBBalParam__(1, 1, 'SDD11')
+# VNA.__SetTopology__(1, 'BBAL')
+# VNA.__SetBBalParam__(1, 1, 'SCC21')
+# VNA.__SetBBalParam__(1, 1, 'SDD11')
+
+# VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
 
 # VNA.instr.write('CALC1:FSIM:BAL:PAR:BBAL SDD11')
 

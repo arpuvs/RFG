@@ -12,6 +12,7 @@ VNA = KeysightN5424A(17)
 
 
 def VNAinit():
+    VNA.__LoadState__('default.csa')
     VNA.__SetSweepType__(1, 'LOG')
     VNA.__SetStartf__(1, startFreq)
     VNA.__SetStopf__(1, endFreq)
@@ -25,6 +26,7 @@ def VNAinit():
     VNA.__SetTopology__(1, 'BBAL')
     VNA.__SetPorts__(1, 1, 3, 2, 4)
     VNA.__EnableBal__(1)
+    VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
 
 
 def setTemp(setpoint):
