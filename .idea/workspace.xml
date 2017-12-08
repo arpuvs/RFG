@@ -2,12 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3a841a57-c9df-464a-8f29-fccd93dbbc94" name="Default" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/RFG.iml" afterPath="$PROJECT_DIR$/.idea/RFG.iml" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/Common/ADI_GPIB/KeysightN5242A.py" afterPath="$PROJECT_DIR$/Common/ADI_GPIB/KeysightN5242A.py" />
       <change beforePath="$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py" afterPath="$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py" />
       <change beforePath="$PROJECT_DIR$/Pronghorn/bsulliv2/VNA_Automation.py" afterPath="$PROJECT_DIR$/Pronghorn/bsulliv2/VNA_Automation.py" />
+=======
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pronghorn/grich2/Balun_Data_Intermod_Dist_Wed Nov 01 09.10.40 2017.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pronghorn/grich2/HD.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pronghorn/grich2/IMD3_Temp_Intermod_Dist_Mon Nov 06 08.01.18 2017.xlsx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Pronghorn/grich2/IMD3_Vcom_Intermod_Dist_Mon Nov 06 11.22.04 2017.xlsx" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pronghorn/grich2/HD23_P3dB.py" afterPath="$PROJECT_DIR$/Pronghorn/grich2/HD23_P3dB.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pronghorn/grich2/IMD.py" afterPath="$PROJECT_DIR$/Pronghorn/grich2/IMD.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pronghorn/grich2/IMD_VCom.py" afterPath="$PROJECT_DIR$/Pronghorn/grich2/IMD_VCom.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pronghorn/grich2/Temp.py" afterPath="$PROJECT_DIR$/Pronghorn/grich2/Temp.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pronghorn/grich2/VNA_Automation.py" afterPath="$PROJECT_DIR$/Pronghorn/grich2/VNA_Automation.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pronghorn/grich2/Ven_Sweeo.py" afterPath="$PROJECT_DIR$/Pronghorn/grich2/Ven_Sweeo.py" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,31 +32,67 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+<<<<<<< HEAD
       <file leaf-file-name="Temp.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1701">
               <caret line="120" column="29" lean-forward="true" selection-start-line="120" selection-start-column="29" selection-end-line="120" selection-end-column="29" />
+=======
+      <file leaf-file-name="AgilentE5071C.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentE5071C.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#74#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HD23_P3dB.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/HD23_P3dB.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="476">
+              <caret line="28" column="32" lean-forward="false" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="KeysightN5242A.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/KeysightN5242A.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="349">
               <caret line="104" column="36" lean-forward="true" selection-start-line="104" selection-start-column="36" selection-end-line="104" selection-end-column="36" />
+=======
+      <file leaf-file-name="IMD.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Pronghorn/grich2/IMD.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="578">
+              <caret line="145" column="24" lean-forward="true" selection-start-line="145" selection-start-column="24" selection-end-line="145" selection-end-column="24" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="VNA_Automation.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/VNA_Automation.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-3066">
               <caret line="16" column="35" lean-forward="true" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
+=======
+      <file leaf-file-name="HD23GUI.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/HD23GUI.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
               <folding />
             </state>
           </provider>
@@ -51,23 +101,44 @@
       <file leaf-file-name="IMD.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/IMD.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="-461">
               <caret line="166" column="0" lean-forward="false" selection-start-line="166" selection-start-column="0" selection-end-line="168" selection-end-column="59" />
+=======
+            <state relative-caret-position="935">
+              <caret line="55" column="5" lean-forward="false" selection-start-line="55" selection-start-column="5" selection-end-line="55" selection-end-column="5" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AgilentN9030A.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py">
+      <file leaf-file-name="IMD.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/IMD.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="967">
               <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="71" selection-end-column="65" />
+=======
+            <state relative-caret-position="3094">
+              <caret line="182" column="28" lean-forward="false" selection-start-line="182" selection-start-column="28" selection-end-line="182" selection-end-column="28" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="IMD3GUI.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/IMD3GUI.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2210">
+              <caret line="130" column="22" lean-forward="false" selection-start-line="130" selection-start-column="22" selection-end-line="130" selection-end-column="22" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+<<<<<<< HEAD
       <file leaf-file-name="AgilentE5071C.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentE5071C.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -76,6 +147,26 @@
               <folding>
                 <element signature="e#0#74#0" expanded="true" />
               </folding>
+=======
+      <file leaf-file-name="AgilentN9030A.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="884">
+              <caret line="54" column="16" lean-forward="false" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
+              <folding>
+                <marker date="1511984878108" expanded="true" signature="879:888" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="WatlowF4.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/WatlowF4.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="24" column="19" lean-forward="false" selection-start-line="24" selection-start-column="19" selection-end-line="24" selection-end-column="19" />
+              <folding />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
             </state>
           </provider>
         </entry>
@@ -94,14 +185,20 @@
       <find>supplyI</find>
       <find>startT</find>
       <find>SetAvera</find>
-      <find>||</find>
       <find>average</find>
-      <find>ClearAvera</find>
-      <find>vcom</find>
       <find>i =</find>
       <find>i in</find>
       <find>Temp</find>
+<<<<<<< HEAD
       <find>for</find>
+=======
+      <find>vcomlist</find>
+      <find>vcom</find>
+      <find>||</find>
+      <find>ClearAvera</find>
+      <find>SetState</find>
+      <find>test</find>
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -124,10 +221,18 @@
         <option value="$PROJECT_DIR$/bsulliv2/HD.py" />
         <option value="$PROJECT_DIR$/Common/FMB_USB_Python_Files/FMB.py" />
         <option value="$PROJECT_DIR$/Common/ADI_GPIB/WatlowF4.py" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py" />
         <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/IMD.py" />
+=======
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
         <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/IMD_VCom.py" />
+        <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/Subs/HD23_P3dB_guissub.py" />
+        <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/HD23GUI.py" />
+        <option value="$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py" />
+        <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py" />
         <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/HD23_P3dB.py" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/Common/ADI_GPIB/AgilentE5071C.py" />
         <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/VNA_Automation.py" />
         <option value="$PROJECT_DIR$/Common/ADI_GPIB/KeysightN5242A.py" />
@@ -140,6 +245,18 @@
     <option name="y" value="360" />
     <option name="width" value="1296" />
     <option name="height" value="1388" />
+=======
+        <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/IMD3GUI.py" />
+        <option value="$PROJECT_DIR$/Pronghorn/bsulliv2/IMD.py" />
+        <option value="$PROJECT_DIR$/Pronghorn/grich2/IMD.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="1097" />
+    <option name="width" value="960" />
+    <option name="height" value="1040" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -159,7 +276,11 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+<<<<<<< HEAD
       <pane id="Scope" />
+=======
+      <pane id="Scratches" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -170,19 +291,37 @@
             <path>
               <item name="RFG" type="b2602c69:ProjectViewProjectNode" />
               <item name="RFG" type="462c0819:PsiDirectoryNode" />
-              <item name="Pronghorn" type="462c0819:PsiDirectoryNode" />
+<<<<<<< HEAD
+=======
+              <item name="Common" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="RFG" type="b2602c69:ProjectViewProjectNode" />
               <item name="RFG" type="462c0819:PsiDirectoryNode" />
               <item name="Pronghorn" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RFG" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RFG" type="462c0819:PsiDirectoryNode" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
+              <item name="Pronghorn" type="462c0819:PsiDirectoryNode" />
               <item name="bsulliv2" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="RFG" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RFG" type="462c0819:PsiDirectoryNode" />
+              <item name="Pronghorn" type="462c0819:PsiDirectoryNode" />
+              <item name="grich2" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
       <pane id="Scratches" />
+=======
+      <pane id="Scope" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -207,20 +346,25 @@
       </list>
     </option>
   </component>
+<<<<<<< HEAD
   <component name="RunManager" selected="Python.Temp">
     <configuration name="AgilentN9030A" type="PythonConfigurationType" factoryName="Python" temporary="true">
+=======
+  <component name="RunManager" selected="Python.IMD (1)">
+    <configuration name="HD23GUI" type="PythonConfigurationType" factoryName="Python" temporary="true">
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Common/ADI_GPIB" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Pronghorn/bsulliv2" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="RFG" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pronghorn/bsulliv2/HD23GUI.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -244,7 +388,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="Temp" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="IMD (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Pronghorn/grich2" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="RFG" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pronghorn/grich2/IMD.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="IMD" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -256,7 +417,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="RFG" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pronghorn/bsulliv2/IMD.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -280,19 +441,19 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="WatlowF4" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="Temp" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Common/ADI_GPIB" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Pronghorn/bsulliv2" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="RFG" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Common/ADI_GPIB/WatlowF4.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -363,8 +524,9 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.HD23_P3dB" />
+      <item index="0" class="java.lang.String" itemvalue="Python.IMD" />
       <item index="1" class="java.lang.String" itemvalue="Python.Temp" />
+<<<<<<< HEAD
       <item index="2" class="java.lang.String" itemvalue="Python.WatlowF4" />
       <item index="3" class="java.lang.String" itemvalue="Python.AgilentN9030A" />
       <item index="4" class="java.lang.String" itemvalue="Python.VNA_Automation" />
@@ -376,6 +538,19 @@
         <item index="2" class="java.lang.String" itemvalue="Python.HD23_P3dB" />
         <item index="3" class="java.lang.String" itemvalue="Python.AgilentN9030A" />
         <item index="4" class="java.lang.String" itemvalue="Python.WatlowF4" />
+=======
+      <item index="2" class="java.lang.String" itemvalue="Python.HD23_P3dB" />
+      <item index="3" class="java.lang.String" itemvalue="Python.HD23GUI" />
+      <item index="4" class="java.lang.String" itemvalue="Python.IMD (1)" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.IMD (1)" />
+        <item index="1" class="java.lang.String" itemvalue="Python.IMD" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Temp" />
+        <item index="3" class="java.lang.String" itemvalue="Python.HD23_P3dB" />
+        <item index="4" class="java.lang.String" itemvalue="Python.HD23GUI" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
       </list>
     </recent_temporary>
   </component>
@@ -396,6 +571,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="340" y="360" width="1296" height="1388" extended-state="1" />
     <editor active="true" />
     <layout>
@@ -409,6 +585,22 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39919677" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+=======
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3347548" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294249" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44842562" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29641694" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39739415" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -425,6 +617,7 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+<<<<<<< HEAD
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21581028" sideWeight="0.5015625" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294249" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -432,12 +625,25 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21673307" sideWeight="0.4984375" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27308294" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+=======
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294249" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44842562" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21623732" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32942432" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+<<<<<<< HEAD
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39601594" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+=======
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39812645" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
@@ -446,6 +652,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+<<<<<<< HEAD
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py</url>
@@ -461,10 +668,14 @@
         </breakpoint>
       </default-breakpoints>
       <option name="time" value="59" />
+=======
+      <option name="time" value="12" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1400">
@@ -479,6 +690,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
     <entry file="file://$PROJECT_DIR$/bsulliv2/IMD.py" />
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/Generic.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -628,6 +841,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bsulliv2/HD23_P3dB.py" />
+<<<<<<< HEAD
     <entry file="file://C:/Python27/Lib/site-packages/pyvisa/ctwrapper/highlevel.py" />
     <entry file="file://$PROJECT_DIR$/Common/FMB_USB_Python_Files/FMB.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -636,6 +850,9 @@
         </state>
       </provider>
     </entry>
+=======
+    <entry file="file://$PROJECT_DIR$/Common/FMB_USB_Python_Files/FMB.py" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/E3631A.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-527">
@@ -645,8 +862,13 @@
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="380">
           <caret line="1025" column="0" lean-forward="false" selection-start-line="1025" selection-start-column="0" selection-end-line="1025" selection-end-column="0" />
+=======
+        <state relative-caret-position="136">
+          <caret line="8" column="14" lean-forward="false" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="14" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
         </state>
       </provider>
     </entry>
@@ -659,13 +881,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/HD23_P3dB.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="452">
           <caret line="253" column="20" lean-forward="false" selection-start-line="253" selection-start-column="20" selection-end-line="253" selection-end-column="20" />
+=======
+        <state relative-caret-position="380">
+          <caret line="1025" column="0" lean-forward="false" selection-start-line="1025" selection-start-column="0" selection-end-line="1025" selection-end-column="0" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/WatlowF4.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="462">
           <caret line="24" column="12" lean-forward="false" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
         </state>
@@ -675,10 +903,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="244">
           <caret line="400" column="0" lean-forward="false" selection-start-line="400" selection-start-column="0" selection-end-line="400" selection-end-column="0" />
+=======
+        <state relative-caret-position="374">
+          <caret line="24" column="19" lean-forward="false" selection-start-line="24" selection-start-column="19" selection-end-line="24" selection-end-column="19" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentE5071C.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="788">
@@ -686,45 +919,110 @@
           <folding>
             <element signature="e#0#74#0" expanded="true" />
           </folding>
+=======
+    <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/Subs/HD23_P3dB_guissub.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-416">
+          <caret line="216" column="0" lean-forward="false" selection-start-line="216" selection-start-column="0" selection-end-line="216" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/IMD_VCom.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="136" column="18" lean-forward="true" selection-start-line="136" selection-start-column="18" selection-end-line="136" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyvisa/ctwrapper/highlevel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="265">
+          <caret line="175" column="48" lean-forward="false" selection-start-line="175" selection-start-column="48" selection-end-line="175" selection-end-column="48" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/AgilentN9030A.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="967">
           <caret line="62" column="0" lean-forward="false" selection-start-line="62" selection-start-column="0" selection-end-line="71" selection-end-column="65" />
+=======
+        <state relative-caret-position="884">
+          <caret line="54" column="16" lean-forward="false" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
+          <folding>
+            <marker date="1511984878108" expanded="true" signature="879:888" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/HD23GUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/IMD.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="-461">
           <caret line="166" column="0" lean-forward="false" selection-start-line="166" selection-start-column="0" selection-end-line="168" selection-end-column="59" />
+=======
+        <state relative-caret-position="3094">
+          <caret line="182" column="28" lean-forward="false" selection-start-line="182" selection-start-column="28" selection-end-line="182" selection-end-column="28" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/Common/ADI_GPIB/KeysightN5242A.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="349">
           <caret line="104" column="36" lean-forward="true" selection-start-line="104" selection-start-column="36" selection-end-line="104" selection-end-column="36" />
+=======
+    <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/IMD3GUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2210">
+          <caret line="130" column="22" lean-forward="false" selection-start-line="130" selection-start-column="22" selection-end-line="130" selection-end-column="22" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/Temp.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="1701">
           <caret line="120" column="29" lean-forward="true" selection-start-line="120" selection-start-column="29" selection-end-line="120" selection-end-column="29" />
+=======
+        <state relative-caret-position="935">
+          <caret line="55" column="5" lean-forward="false" selection-start-line="55" selection-start-column="5" selection-end-line="55" selection-end-column="5" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Pronghorn/bsulliv2/VNA_Automation.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="-3066">
           <caret line="16" column="35" lean-forward="true" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
+=======
+        <state relative-caret-position="476">
+          <caret line="28" column="32" lean-forward="false" selection-start-line="28" selection-start-column="32" selection-end-line="28" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pronghorn/grich2/IMD.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="145" column="24" lean-forward="true" selection-start-line="145" selection-start-column="24" selection-end-line="145" selection-end-column="24" />
+>>>>>>> d2e812cd3f7d437ae9451c12721c6b4d2d1f1496
           <folding />
         </state>
       </provider>

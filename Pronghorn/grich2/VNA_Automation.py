@@ -2,24 +2,29 @@
 import sys, visa, time, math, cmath
 sys.path.append('../../Common')
 
-from ADI_GPIB.AgilentE5071C import *
+from ADI_GPIB.WatlowF4 import *
 from ADI_GPIB.E3631A import *
-VNA = AgilentE5071C(17)
-# Oven = WatlowF4(999999999)
-Supply = E3631A(10)
+from ADI_GPIB.KeysightN5242A import *
+
+VNA = KeysightN5424A(17)
+# Oven = WatlowF4(4)
+# Supply = E3631A(23)
 
 
 def VNAinit():
-    VNA.__SetSweepType(1, 'LOG')
-    VNA.__SetStartf__(1, 10e06)
-    VNA.__SetStopf__(1, 10.01e09)
-    VNA.__SetNumPoints__(1, 1e3)
-    VNA.__SetAvg__(1, 16)
+    VNA.__SetSweepType__(1, 'LOG')
+    VNA.__SetStartf__(1, startFreq)
+    VNA.__SetStopf__(1, endFreq)
+    VNA.__SetNumPoints__(1, numPoints)
+    VNA.__SetAvg__(1, avg)
     VNA.__SetAutoTime__(1, True)
     VNA.__SetTrigType__('MAN')
     VNA.__SetContinuous__(1, False)
-    VNA.__EnableAvg(1, True)
-    VNA.__EnableTrigAvg__(True)
+    VNA.__EnableAvg__(1, True)
+    # VNA.__EnableTrigAvg__(True)
+    VNA.__SetTopology__(1, 'BBAL')
+    VNA.__SetPorts__(1, 1, 2, 3, 4)
+    VNA.__EnableBal__(1)
 
 
 def setTemp(setpoint):
@@ -39,41 +44,42 @@ def setTemp(setpoint):
 # def setSupply():
 
 def meas():
-    VNA.__InitMeas__(1)
-    VNA.__SingleTrig__()
-    status = 0
-    while status == 0:
-        status = VNA.__CheckStatus__()
-        time.sleep(0.1)
+    for run in range(avg):
+        VNA.__InitMeas__(1)
+        VNA.__CheckStatus__(600)
+    # VNA.__SingleTrig__()  # ERROR: Unidentified header
     ans = VNA.__GetData__(1)
     ans = ans.split(',')
-    magans = []
-    imagans = []
     for val in range(len(ans)):
-        if (val % 2) == 0:
-            magans.append(float(ans[val]))
-        else:
-            imagans.append(float(ans[val]))
+        ans[val] = float(ans[val])
+    # magans = []
+    # imagans = []
+    # for val in range(len(ans)):
+    #     if (val % 2) == 0:
+    #         magans.append(float(ans[val]))
+    #     else:
+    #         imagans.append(float(ans[val]))
 
-    compans = []
-    for val in range(len(magans)):
-        compans.append(magans[val] + imagans[val] * 1j)
+    # compans = []
+    # for val in range(len(magans)):
+    #     compans.append(magans[val] + imagans[val] * 1j)
 
     # return compans
-    return magans, imagans
+    # return magans, imagans
+    return ans
 
 
 def build_av(mlog):
     ans = []
     for val in range(len(mlog)):
-        ans.append(mlog[val] - 10.0*math.log10(Zout_diff/Zin_diff))
+        ans.append(mlog[val] - 10.0*math.log10(Zin_diff/Zout_diff))
     return ans
 
 
 def build_cmrr(sdd21, sdc21):
     ans = []
     for val in range(len(sdd21)):
-        ans.append(sdd21[val] - sdc21[va])
+        ans.append(sdd21[val] - sdc21[val])
     return ans
 
 
@@ -137,6 +143,7 @@ def getData():
     scc21_mlog = meas()
 
     VNA.__SetBBalParam__(1, 1, 'SDC21')
+    VNA.__SetActiveFormat__(1, 'MLOG')
     sdc21_mlog = meas()
 
     VNA.__SetBBalParam__(1, 1, 'SDD11')
@@ -159,27 +166,123 @@ def getData():
     VNA.__SetActiveFormat__(1, 'POL')
     sdd21_pol = meas()
 
-    av = build_av(sdd21_mlog[1])
-    cmrr1 = build_cmrr(sdd21_mlog[1], sdc21_mlog[1])
-    cmrr2 = build_cmrr(sdd21_mlog[1], scc21_mlog[1])
-    group_delay = build_gdel(sdd21_pol[1], freqlist)
-    s12_v = build_av(sdd12_mlog[1])
-    zyIn = build_zy(sdd11_mlog)
-    zyOut = build_zy(sdd22_mlog)
+    VNA.__SetBBalParam__(1, 1, 'SDD11')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdd11_mlog = meas()
+
+    VNA.__SetBBalParam__(1, 1, 'SDD22')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdd22_mlog = meas()
+
+    av = build_av(sdd21_mlog)
+    cmrr1 = build_cmrr(sdd21_mlog, sdc21_mlog)
+    cmrr2 = build_cmrr(sdd21_mlog, scc21_mlog)
+    # group_delay = build_gdel(sdd21_pol, freqlist)
+    # s12_v = build_av(sdd12_mlog)
+    # zyIn = build_zy(sdd11_mlog)
+    # zyOut = build_zy(sdd22_mlog)
+
+    freqlist = []
+    freqlist.append(startFreq)
+    for i in (range(numPoints - 1)):
+        freqlist.append(freqlist[i] + ((endFreq-startFreq)/numPoints))
+
+    fh.write('Frequency,')
+    fh.write(str(freqlist).strip('[]'))
+    fh.write('\n')
+    fh.write('SCC21 MLOG,')
+    fh.write(str(scc21_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDC21 MLOG,')
+    fh.write(str(sdc21_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD11 POL,')
+    fh.write(str(sdd11_pol).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD12 MLOG,')
+    fh.write(str(sdd12_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 GDEL,')
+    fh.write(str(sdd21_gdel).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 MLOG,')
+    fh.write(str(sdd21_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 POL,')
+    fh.write(str(sdd21_pol).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD11 MLOG,')
+    fh.write(str(sdd11_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD22 MLOG,')
+    fh.write(str(sdd22_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('AV, ')
+    fh.write(str(av).strip('[]'))
+    fh.write('\n')
+    fh.write('CMRR1, ')
+    fh.write(str(cmrr1).strip('[]'))
+    fh.write('\n')
+    fh.write('CMRR2, ')
+    fh.write(str(cmrr2).strip('[]'))
+    fh.write('\n')
+
+def header():
+    test = 'IMD3'
+    equipment = 'N5181A N9030A BAL0026 BAL006'
+    # supplyV = Supply.__MeasP25V__()
+    supplyV = 'Temp'
+    print supplyV
+    # supplyI = Supply.__MeasP25I__()
+    supplyI = 'Temp'
+    print supplyI
+    balun = 'INB: 0-VIN OUTB 0-VOP'
+    header = (dut, date, test, equipment, supplyV, supplyI, balun)
+    header = str(header).strip('()')
+    fh.write(header)
+    fh.write('\n')
 
 
 
+
+
+
+
+    # VNA.__SetBBalParam__(1, 1, 'SDD12')     # Doesn't seem to change to SDD12
+    # VNA.__SetActiveFormat__(1, 'MLOG')
+    # sdd12_mlog = meas()
+    # print sdd12_mlog
+
+startTime = time.time()
+
+path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\'
+
+date = time.ctime(time.time())
+date = date.replace(':', '-')
+fh = open(path + 'Intermod_Dist_' + date + '.csv', 'w')
 
 Zin_diff = 100
 Zout_diff = 100
+avg = 3
+numPoints = 1000.0
+startFreq = 10e6
+endFreq = 10.01e9
 
-freqlist = []
-freqlist.append(10e6)
-for i in (range(1e3) -1):
-    freqlist.append(freqlist[i] + 10e6)
+
+
+
+
+VNAinit()
 
 getData()
 
+endTime = time.time()- startTime
+
+print 'Program executed in %d seconds.' % endTime
+
+fh.write('Execution Time = ,%d' % endTime)
+
+fh.close()
 # supplies = [5.0]
 # temps = [25]
 # currents = []
