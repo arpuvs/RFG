@@ -119,6 +119,7 @@ def IMD3main(path, freqlist, vcomlist, templist, dut, attnList):
         fh.write('\n')
         fh.write('Attenuation Setting:,')
         fh.write(str(attnList).strip('[]'))   # Only thing added so far - printing out all attn readings at all freqs
+        fh.write('\n')
         fh.write('Supply Current:,')
         fh.write(str(supplyI).strip('[]'))
         fh.write('\n')
