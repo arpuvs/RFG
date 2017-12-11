@@ -60,6 +60,15 @@ class AgilentN9030A(GPIBObjectBaseClass):
     def __SetBW__(self, bw):
         self.instr.write(':BAND %d' % bw)
 
+    def __SetAutoAtten__(self, state):
+        self.instr.write(':POW:ATT:AUTO %d' % state)
+
+    def __SetAtten__(self, attn):
+        self.instr.write(':POW:ATT %d' % attn)
+
+    def __GetAtten__(self):
+        return self.instr.ask(':POW:ATT?')
+
     def __CheckStatus__(self, maxWait):
         endtime = time.time() + maxWait
         while True:
