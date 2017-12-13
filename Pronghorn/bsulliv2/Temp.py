@@ -7,7 +7,7 @@ from ADI_GPIB.AgilentN9030A import *
 # # from ADI_GPIB.AgilentN6705B import *
 # from FMB import *
 #
-
+import xlsxwriter
 # import atexit
 #
 # def exit_handler():
@@ -24,18 +24,57 @@ from ADI_GPIB.AgilentN9030A import *
 #           17: "4.5 GHz", 18: "5 GHz", 19: "5.5 GHz", 20: "5.9 GHz",
 #           21: "Aux"}
 #
+
+# fh = open('Test.csv', 'w')
+
+workbook = xlsxwriter.Workbook('Test.xlsx')
+worksheet = workbook.add_worksheet()
+meas1 = range(1, 101)
+meas2 = range(10, 1001, 10)
+meas3 = range(100, 10001, 100)
+
+col = 0
+row = 0
+for i in range(len(meas1)):
+    row = i
+    worksheet.write(row, col, meas1[i])
+
+col = col + 1
+for i in range(len(meas2)):
+    row = i
+    worksheet.write(row, col, meas2[i])
+
+col = col + 1
+for i in range(len(meas3)):
+    row = i
+    worksheet.write(row, col, meas3[i])
+
+workbook.close()
+# for i in range(len(meas1)):
+#     line = [meas1[i], meas2[i], meas3[i]]
+#     fh.write(str(line).strip('[]'))
+#     fh.write('\n')
+# fh.write(str(meas1).strip('[]'))
+# fh.write('\n')
+# fh.write(str(meas2).strip('[]'))
+# fh.write('\n')
+# fh.write(str(meas3).strip('[]'))
+# fh.write('\n')
+
+
+# print meas1, meas2, meas3
 # Filter = FMB('COM3', fmbDict)
 # Source2 = AgilentN5181A(11)
-Analyzer = AgilentN9030A(18)
-
-Analyzer.__SetAutoAtten__(1)
-# Analyzer.instr.write(':POW:ATTN:AUTO 1')
-time.sleep(1)
-Analyzer.__SetAutoAtten__(0)
-Analyzer.__SetAtten__(12)
-
-print Analyzer.__GetAtten__()
-# # # Filter.select_filter(3)
+# Analyzer = AgilentN9030A(18)
+#
+# Analyzer.__SetAutoAtten__(1)
+# # Analyzer.instr.write(':POW:ATTN:AUTO 1')
+# time.sleep(1)
+# Analyzer.__SetAutoAtten__(0)
+# Analyzer.__SetAtten__(12)
+#
+# print Analyzer.__GetAtten__()
+# # # # Filter.select_filter(3)
 # # print Filter.get_filter_center_freq_hz(19)
 #
 # # Filter box test
