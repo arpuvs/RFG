@@ -70,8 +70,8 @@ class KeysightN5424A(GPIBObjectBaseClass):
 
     def __SetActiveTrace__(self, channel, trace):  # Can't find on PXA***
         # self.instr.write(":CALC%d:PAR%d:SEL" % (channel, trace))
-        self.instr.write("CALC:PAR:SEL \'CH1_S11_1\'")
-
+        # self.instr.write("CALC:PAR:SEL \'CH1_S11_1\'")
+        self.instr.write('CALC%d:PAR:SEL \'%s\'' % (channel, trace))
 
     def __SetBBalParam__(self, channel, trace, param):  # Can't find on PXA***
         # self.instr.write(":CALC%d:FSIM:BAL:PAR%d:BBAL %s" % (channel, trace, param))
@@ -105,11 +105,11 @@ class KeysightN5424A(GPIBObjectBaseClass):
     def __AddWindow__(self, window):
         self.instr.write('DISP:WIND%d ON' % window)
 
-    def __AddMeas__(self, channel, name, meastype):
+    def __AddMeas__(self, channel, name, meastype, subtype):
         # meastypes: S11,S21..., Gain Compression, Gain Compression Converters, Noise Figure Cold Source,
         # Noise Figure Converters, Swept IMD, Swept IMD Converters, IM Spectrum, IMx Specrtrum Converters,
         # Differential I/Q
-        self.instr.write('CALC%d:CUST:DEF \'%s\', \'%s\'' % (channel, name, meastype))
+        self.instr.write('CALC%d:CUST:DEF \'%s\', \'%s\', \'%s\'' % (channel, name, meastype, subtype))
 
     def __AddTrace__(self, window, trace, name):
         self.instr.write('DISP:WIND%d:TRAC%d:FEED \'%s\'' % (window, trace, name))
@@ -122,6 +122,33 @@ class KeysightN5424A(GPIBObjectBaseClass):
 
     def __IMDStop__(self, channel, frequency):
         self.instr.write('SENS%d:IMD:FREQ:FCEN:STOP %g' % (channel, frequency))
+
+    def __IMDPower__(self, window, level):
+        self.instr.write('SENS%d:IMD:TPOW:F1 %d' % (window, level))
+        self.instr.write('SENS%d:IMD:TPOW:F2 %d' % (window, level))
+
+    def __IMDPowType__(self, window, type):
+        # Could use input or output
+        self.instr.write('SENS%d:IMD:TPOW:LEV %s' % (window, type))
+
+    def __Preset__(self, type = 'partial'):
+        if type.lower() == 'full':
+            self.instr.write('SYST:FPR')
+        else:
+            self.instr.write('SYST:PRES')
+
+    def __FinishAvg__(self, channel, maxWait):
+        endtime = time.time() + maxWait
+        while True:
+            check = int(self.instr.ask('STAT:OPER:AVER%d:COND?' % channel))
+            print check
+            if check != 0:
+                return 1
+            else:
+                time.sleep(0.25)
+                if time.time() > endtime:
+                    raise Exception('Maximum wait time exceeded')
+
 
     def __GetData__(self, channel):  # Can't find on PXA**
         return self.instr.ask("CALC%d:DATA? FDATA" % channel)
