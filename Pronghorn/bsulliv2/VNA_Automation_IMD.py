@@ -116,7 +116,7 @@ def getData():
     for meas in measlist:
         fh.write(meas)
         fh.write(',')
-        fh.write(str(readDict[meas]).strip('[])'))
+        fh.write(str(readDict[meas]).strip('[]'))
         fh.write('\n')
     #
     #

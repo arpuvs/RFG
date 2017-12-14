@@ -202,7 +202,16 @@ def IMD():
         VNA.__SetActiveTrace__(2, meas)
         print VNA.__GetData__(2)
 
-print VNA.instr.ask('STAT:OPER:AVER1:COND?')
+# test = ['Blah 1', 'Blah 2']
+# print test[0].split()[1]
+# print test[1].split()[1]
+
+test = {'test1': 1, 'test2' : 2}
+for i in test:
+    print i
+    print test[i]
+
+# print VNA.instr.ask('STAT:OPER:AVER1:COND?')
 # VNA.__Preset__('full')
 # test = {}
 # measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']

@@ -94,7 +94,7 @@ class KeysightN5424A(GPIBObjectBaseClass):
         self.instr.write(':CALC%d:FSIM:BAL:TOP:BBAL %d,%d,%d,%d' % (channel, p1Pos, p1Neg, p2Pos, p2Neg))
 
     def __EnableBal__(self, channel):
-        self.instr.write(':CALC:FSIM:BAL:PAR:STAT 1')
+        self.instr.write('CALC%d:FSIM:BAL:PAR:STAT 1' % channel)
 
     def __GetFreq__(self, channel):
         return self.instr.ask('CALC%d:X?' % channel)
@@ -113,6 +113,9 @@ class KeysightN5424A(GPIBObjectBaseClass):
 
     def __AddTrace__(self, window, trace, name):
         self.instr.write('DISP:WIND%d:TRAC%d:FEED \'%s\'' % (window, trace, name))
+
+    def __RemoveTrace__(self, window, trace):
+        self.instr.write('DISP:WIND%d:TRAC%d:DEL' % (window, trace))
 
     def __IMDDelta__(self, channel, spacing):
         self.instr.write('SENS%d:IMD:FREQDFR %g' % (channel, spacing))
@@ -141,7 +144,7 @@ class KeysightN5424A(GPIBObjectBaseClass):
         endtime = time.time() + maxWait
         while True:
             check = int(self.instr.ask('STAT:OPER:AVER%d:COND?' % channel))
-            print check
+            # print check
             if check != 0:
                 return 1
             else:
