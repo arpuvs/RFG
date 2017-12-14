@@ -7,7 +7,7 @@ from ADI_GPIB.E3631A import *
 from ADI_GPIB.KeysightN5242A import *
 
 VNA = KeysightN5424A(17)
-# Oven = WatlowF4(4)
+Oven = WatlowF4(4)
 # Supply = E3631A(23)
 
 
@@ -324,12 +324,22 @@ endFreq = 10.01e9
 measlist = ['SCC21 MLOG', 'SDC21 MLOG', 'SDD11 POL', 'SDD12 MLOG', 'SDD21 GDEL',
             'SDD21 MLOG', 'SDD21 POL', 'SDD11 MLOG', 'SDD22 MLOG']
 
-
-
+templist = [25]
+vcomlist = ['N/A']
 
 VNAinit()
 
-getData()
+for temp in templist:
+    # for balun in balunList:
+    if templist != [25]:
+        setTemp(temp)
+    # fh.write('Balun config = %s' % balun)
+    fh.write('Temp = %d' % temp)
+    fh.write('\n')
+    for vcom in vcomlist:
+        fh.write('Vcom = %s\n' % vcom)
+        # Supply.__SetV__(vcom, 3)  # Does nothing right now. Second supply not connected
+        getData()
 
 endTime = time.time()- startTime
 

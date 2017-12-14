@@ -215,10 +215,21 @@ startFreq = 10.5e6
 endFreq = 10.0105e9
 
 measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
+templist = [25]
+vcomlist = ['N\A']
 
 VNAinit()
-
-getData()
+for temp in templist:
+    # for balun in balunList:
+    if templist != [25]:
+        setTemp(temp)
+    # fh.write('Balun config = %s' % balun)
+    fh.write('Temp = %d' % temp)
+    fh.write('\n')
+    for vcom in vcomlist:
+        fh.write('Vcom = %s\n' % vcom)
+        # Supply.__SetV__(vcom, 3)  # Does nothing right now. Second supply not connected
+        getData()
 
 endTime = time.time()- startTime
 

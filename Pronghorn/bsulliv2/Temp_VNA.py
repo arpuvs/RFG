@@ -5,6 +5,7 @@ sys.path.append('../../Common')
 # from ADI_GPIB.AgilentN5181A import *
 # from ADI_GPIB.AgilentN9030A import *
 # # from ADI_GPIB.AgilentN6705B import *
+from ADI_GPIB.WatlowF4 import *
 # from FMB import *
 #
 
@@ -52,11 +53,12 @@ sys.path.append('../../Common')
 # Source1 = AgilentN5181A(20)
 # Source2 = AgilentN5181A(11)
 # Analyzer = AgilentN9030A(18)
-# Oven = WatlowF4(4)
+Oven = WatlowF4(4)
 # # #
 # #
-# print Oven.__GetTemp__()
-# print Oven.__GetSP__()
+Oven.__SetTemp__(25)
+print Oven.__GetTemp__()
+print Oven.__GetSP__()
 # from ADI_GPIB.WatlowF4 import *
 # from ADI_GPIB.AgilentE5071C import *
 from ADI_GPIB.KeysightN5242A import *
