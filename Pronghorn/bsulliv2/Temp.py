@@ -7,7 +7,10 @@ from ADI_GPIB.AgilentN9030A import *
 # # from ADI_GPIB.AgilentN6705B import *
 # from FMB import *
 #
-import xlsxwriter
+# import xlsxwriter
+import openpyxl
+from openpyxl import *
+from openpyxl.utils import *
 # import atexit
 #
 # def exit_handler():
@@ -27,29 +30,68 @@ import xlsxwriter
 
 # fh = open('Test.csv', 'w')
 
-workbook = xlsxwriter.Workbook('Test.xlsx')
-worksheet = workbook.add_worksheet()
-meas1 = range(1, 101)
-meas2 = range(10, 1001, 10)
-meas3 = range(100, 10001, 100)
+wb = load_workbook(filename = 'openpyxlTest.xlsx')
+sheet_ranges = wb['Worksheet 3']
+# print sheet_ranges
+# print sheet_ranges['AA']
 
-col = 0
-row = 0
-for i in range(len(meas1)):
-    row = i
-    worksheet.write(row, col, meas1[i])
+AA = sheet_ranges['AA']
+print AA
+val = AA[12].value
+print val
 
-col = col + 1
-for i in range(len(meas2)):
-    row = i
-    worksheet.write(row, col, meas2[i])
+print len(AA)
 
-col = col + 1
-for i in range(len(meas3)):
-    row = i
-    worksheet.write(row, col, meas3[i])
+for row in range(len(AA)+1, len(AA) + 20):
+    for col in range(1,10):
+        sheet_ranges.cell(column=col, row=row, value='BS TEST 3')
 
-workbook.close()
+wb.save(filename = 'openpyxlTest.xlsx')
+# wb = Workbook()
+#
+# dest_filename = 'openpyxlTest.xlsx'
+#
+# ws1 = wb.active
+# ws1.title = 'Worksheet title'
+#
+# for row in range(1, 40):
+#     ws1.append(range(600))
+#
+# ws2 = wb.create_sheet(title='WS2')
+# ws2['F5'] = 3.14
+#
+# ws3 = wb.create_sheet(title='Worksheet 3')
+# for row in range(10,20):
+#     for col in range(27,54):
+#         _ = ws3.cell(column = col, row=row, value='{0}'.format(get_column_letter(col)))
+# print(ws3['AA10'].value)
+#
+# wb.save(filename=dest_filename)
+
+
+# workbook = xlsxwriter.Workbook('Test.xlsx')
+# worksheet = workbook.add_worksheet()
+# meas1 = range(1, 101)
+# meas2 = range(10, 1001, 10)
+# meas3 = range(100, 10001, 100)
+#
+# col = 0
+# row = 0
+# for i in range(len(meas1)):
+#     row = i
+#     worksheet.write(row, col, meas1[i])
+#
+# col = col + 1
+# for i in range(len(meas2)):
+#     row = i
+#     worksheet.write(row, col, meas2[i])
+#
+# col = col + 1
+# for i in range(len(meas3)):
+#     row = i
+#     worksheet.write(row, col, meas3[i])
+
+# workbook.close()
 # for i in range(len(meas1)):
 #     line = [meas1[i], meas2[i], meas3[i]]
 #     fh.write(str(line).strip('[]'))
