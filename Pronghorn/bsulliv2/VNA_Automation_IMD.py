@@ -50,6 +50,9 @@ def VNAinit():
     # VNA.__SetTopology__(2, 'BBAL')
     # VNA.__SetPorts__(2, 1, 3, 2, 4)
     # VNA.__EnableBal__(2)
+    VNA.instr.write('SENS:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
+    VNA.__EnableAvg__(1, True)
+    VNA.__SetAvg__(1, avg)
 
 
 def setTemp(setpoint):
