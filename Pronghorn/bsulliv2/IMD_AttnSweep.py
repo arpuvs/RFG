@@ -190,7 +190,7 @@ def IMD3main(path, freqlist, vcomlist, templist, dut, attnList):
         if templist != [25]:
             setTemp(temp)
         # fh.write('Balun config = %s' % balun)
-        fh.write('Temp = %d' % temp)
+        fh.write('***Temp = %d***' % temp)
         fh.write('\n')
         for vcom in vcomlist:
             Supply.__SetV__(vcom, 3)  # Sets DUT to common mode voltage
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     # vcoms = [2.0, 2.5, 3.0]
     vcoms = [2.5]
     # temps = [25, 85, -40]
-    temps = [25]
+    temps = [25, 80, -40]
     dut = '4-3'
 
     IMD3main(path, freqs, vcoms, temps, dut, attns)  # Calls main program
