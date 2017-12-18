@@ -86,18 +86,21 @@ def original():
     # VNA.__SetActiveTrace__(1, 1)
 
     #
+    VNA.__Preset__()
     VNA.__AddWindow__(2)
-    VNA.__AddMeas__(2, 'P1dB', 'Gain Compression', 'CompIn21')
+    VNA.__AddMeas__(2, 'P1dB', 'Gain Compression', 'CompOut21')
     VNA.__AddTrace__(2, 1, 'P1dB')
     # VNA.__SetSweepType__(2, 'LOG')
     VNA.__SetStartf__(2, 10.5e6)
     VNA.__SetStopf__(2, 10.0105e9)
     VNA.__SetNumPoints__(2, 1e3)
     VNA.__SetAvg__(2, 1)
+    VNA.__SetSweepType__(2, 'LOG')
     VNA.__SetAutoTime__(2, True)
     # VNA.__SetTrigType__('MAN')
     # VNA.__SetContinuous__(2, False)
     VNA.__EnableAvg__(2, True)
+    VNA.instr.write('SENS2:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
     # VNA.__EnableTrigAvg__(True)
     # VNA.__SetTopology__(2, 'BBAL')
     # VNA.__SetPorts__(2, 1, 3, 2, 4)
@@ -110,10 +113,14 @@ def original():
     VNA.__SetStopf__(3, 10.0105e9)
     VNA.__SetNumPoints__(3, 1e3)
     VNA.__SetAvg__(3, 1)
+    # time.sleep(1)
+    VNA.instr.write('SENS3:CORR:CSET:ACT \"BS_NF_Cal\", 1')
+    VNA.__SetSweepType__(3, 'LOG')
     VNA.__SetAutoTime__(3, True)
     # VNA.__SetTrigType__('MAN')
     # VNA.__SetContinuous__(3, False)
     VNA.__EnableAvg__(3, True)
+
     # VNA.__EnableTrigAvg__(True)
     # VNA.__SetTopology__(3, 'BBAL')
     # VNA.__SetPorts__(3, 1, 3, 2, 4)
@@ -204,7 +211,46 @@ def IMD():
         VNA.__SetActiveTrace__(2, meas)
         print VNA.__GetData__(2)
 
-original()
+# VNA.instr.write('SENS:)
+# original()
+# freqlist = VNA.__GetFreq__(2)
+# freqlist = freqlist.split(',')
+# for val in range(len(freqlist)):
+#     freqlist[val] = float(freqlist[val])
+# print freqlist
+#
+# freqlist = VNA.__GetFreq__(3)
+# freqlist = freqlist.split(',')
+# for val in range(len(freqlist)):
+#     freqlist[val] = float(freqlist[val])
+# print freqlist
+# meas = 'P1dB'
+# VNA.__SetActiveTrace__(2, meas)
+# # VNA.__CheckStatus__(600)
+# # for i in range(avg):
+# #     VNA.__InitMeas__(1)
+# #     VNA.__CheckStatus__(600)
+# ans = VNA.__GetData__(2)
+# ans = ans.split(',')
+# for val in range(len(ans)):
+#     ans[val] = float(ans[val])
+# P1dB = ans
+# print P1dB
+#
+# meas = 'NF'
+# VNA.__SetActiveTrace__(3, meas)
+# # VNA.__CheckStatus__(600)
+# # for i in range(avg):
+# #     VNA.__InitMeas__(1)
+# #     VNA.__CheckStatus__(600)
+# ans = VNA.__GetData__(3)
+# ans = ans.split(',')
+# for val in range(len(ans)):
+#     ans[val] = float(ans[val])
+# NF = ans
+# print NF
+
+# original()
 # test = ['Blah 1', 'Blah 2']
 # print test[0].split()[1]
 # print test[1].split()[1]
