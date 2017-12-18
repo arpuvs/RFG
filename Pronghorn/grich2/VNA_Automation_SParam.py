@@ -7,41 +7,26 @@ from ADI_GPIB.E3631A import *
 from ADI_GPIB.KeysightN5242A import *
 
 VNA = KeysightN5424A(17)
-Oven = WatlowF4(4)
+# Oven = WatlowF4(4)
 # Supply = E3631A(23)
 
 
 def VNAinit():
-    VNA.__Preset__()
+    VNA.__LoadState__('default.csa')
     VNA.__SetSweepType__(1, 'LOG')
     VNA.__SetStartf__(1, startFreq)
     VNA.__SetStopf__(1, endFreq)
     VNA.__SetNumPoints__(1, numPoints)
+    VNA.__SetAvg__(1, avg)
     VNA.__SetAutoTime__(1, True)
-    # VNA.__SetTrigType__('MAN')
-    # VNA.__SetContinuous__(1, False)
-    VNA.__EnableAvg__(1, False)
+    VNA.__SetTrigType__('MAN')
+    VNA.__SetContinuous__(1, False)
+    VNA.__EnableAvg__(1, True)
     # VNA.__EnableTrigAvg__(True)
     VNA.__SetTopology__(1, 'BBAL')
     VNA.__SetPorts__(1, 1, 3, 2, 4)
     VNA.__EnableBal__(1)
-    # VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
-    VNA.__RemoveTrace__(1, 1)
-    trace = 1
-    for meas in measlist:
-        VNA.__AddMeas__(1, meas, 'Standard', meas.split()[0])
-        VNA.__AddTrace__(1, trace, meas)
-        VNA.__SetActiveTrace__(1, meas)
-        VNA.__SetActiveFormat__(1, meas.split()[1])
-        trace = trace + 1
-
-
-    # VNA.__SetTopology__(1, 'BBAL')
-    # VNA.__SetPorts__(1, 1, 3, 2, 4)
-    # VNA.__EnableBal__(1)
     VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
-    VNA.__EnableAvg__(1, True)
-    VNA.__SetAvg__(1, avg)
 
 
 def setTemp(setpoint):
@@ -155,57 +140,116 @@ def lumped(mlog):
 
 
 def getData():
-    readDict = {}
-    VNA.__FinishAvg__(1,600)
-    for meas in measlist:
-        VNA.__SetActiveTrace__(1, meas)
-        ans = VNA.__GetData__(1)
-        ans = ans.split(',')
-        for val in range(len(ans)):
-            ans[val] = float(ans[val])
+    # Scc21
+    VNA.__SetActiveTrace__(1, 'CH1_S11_1')
+    VNA.__SetBBalParam__(1, 1, 'SCC21')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    scc21_mlog = meas()
 
-        if meas.split()[1] == 'POL':
-            readDict[meas + '1'] = []
-            readDict[meas + '2'] = []
-            for i in range(len(ans)):
-                if i % 2:
-                    readDict[meas + '1'].append(ans[i])
-                else:
-                    readDict[meas + '2'].append(ans[i])
+    VNA.__SetBBalParam__(1, 1, 'SDC21')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdc21_mlog = meas()
+
+    VNA.__SetBBalParam__(1, 1, 'SDD11')
+    VNA.__SetActiveFormat__(1, 'POL')
+    sdd11_pol = meas()
+    sdd11_pol1 = []
+    sdd11_pol2 = []
+    for i in range(len(sdd11_pol)):
+        if i % 2:
+            sdd11_pol1.append(sdd11_pol[i])
         else:
-            readDict[meas] = ans
+            sdd11_pol2.append(sdd11_pol[i])
+    sdd11_pol = [sdd11_pol1, sdd11_pol2]
 
+    VNA.__SetBBalParam__(1, 1, 'SDD12')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdd12_mlog = meas()
+
+    VNA.__SetBBalParam__(1, 1, 'SDD21')
+    VNA.__SetActiveFormat__(1, 'GDEL')
+    sdd21_gdel = meas()
+
+    VNA.__SetBBalParam__(1, 1, 'SDD21')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdd21_mlog = meas()
+
+    VNA.__SetBBalParam__(1, 1, 'SDD22')
+    VNA.__SetActiveFormat__(1, 'POL')
+    sdd21_pol = meas()
+    sdd21_pol1 = []
+    sdd21_pol2 = []
+    for i in range(len(sdd21_pol)):
+        if i % 2:
+            sdd21_pol1.append(sdd21_pol[i])
+        else:
+            sdd21_pol2.append(sdd21_pol[i])
+    sdd21_pol = [sdd21_pol1, sdd21_pol2]
+
+    VNA.__SetBBalParam__(1, 1, 'SDD11')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdd11_mlog = meas()
+
+    VNA.__SetBBalParam__(1, 1, 'SDD22')
+    VNA.__SetActiveFormat__(1, 'MLOG')
+    sdd22_mlog = meas()
+
+    # freqlist = []
+    # freqlist.append(startFreq)
+    # for i in (range(int(numPoints) - 1)):
+    #     freqlist.append(freqlist[i] + ((endFreq-startFreq)/numPoints))
     freqlist = VNA.__GetFreq__(1)
     freqlist = freqlist.split(',')
+    # print freqlist
     for val in range(len(freqlist)):
         freqlist[val] = float(freqlist[val])
 
-    av = build_av(readDict['SDD21 MLOG'])
-    cmrr1 = build_cmrr(readDict['SDD21 MLOG'], readDict['SDC21 MLOG'])
-    cmrr2 = build_cmrr(readDict['SDD21 MLOG'], readDict['SCC21 MLOG'])
-    group_delay = build_gdel(readDict['SDD21 POL1'], freqlist)
-    s12_v = build_av(readDict['SDD12 MLOG'])
+    av = build_av(sdd21_mlog)
+    cmrr1 = build_cmrr(sdd21_mlog, sdc21_mlog)
+    cmrr2 = build_cmrr(sdd21_mlog, scc21_mlog)
+    group_delay = build_gdel(sdd21_pol[0], freqlist)
+    s12_v = build_av(sdd12_mlog)
     # zyIn = build_zy(sdd11_mlog)
     # zyOut = build_zy(sdd22_mlog)
+
+
 
     fh.write('Frequency,')
     fh.write(str(freqlist).strip('[]'))
     fh.write('\n')
-    for meas in measlist:
-        if meas.split()[1] == 'POL':
-            fh.write(meas + '1')
-            fh.write(',')
-            fh.write(str(readDict[meas + '1']).strip('[]'))
-            fh.write('\n')
-            fh.write(meas + '2')
-            fh.write(',')
-            fh.write(str(readDict[meas + '2']).strip('[]'))
-            fh.write('\n')
-        else:
-            fh.write(meas)
-            fh.write(',')
-            fh.write(str(readDict[meas]).strip('[]'))
-            fh.write('\n')
+    fh.write('SCC21 MLOG,')
+    fh.write(str(scc21_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDC21 MLOG,')
+    fh.write(str(sdc21_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD11 POL 1,')
+    fh.write(str(sdd11_pol[0]).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD11 POL 2,')
+    fh.write(str(sdd11_pol[1]).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD12 MLOG,')
+    fh.write(str(sdd12_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 GDEL,')
+    fh.write(str(sdd21_gdel).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 MLOG,')
+    fh.write(str(sdd21_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 POL 1,')
+    fh.write(str(sdd21_pol[0]).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD21 POL 2,')
+    fh.write(str(sdd21_pol[1]).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD11 MLOG,')
+    fh.write(str(sdd11_mlog).strip('[]'))
+    fh.write('\n')
+    fh.write('SDD22 MLOG,')
+    fh.write(str(sdd22_mlog).strip('[]'))
+    fh.write('\n')
     fh.write('AV, ')
     fh.write(str(av).strip('[]'))
     fh.write('\n')
@@ -221,63 +265,6 @@ def getData():
     fh.write('S12_V,')
     fh.write(str(s12_v).strip('[]'))
     fh.write('\n')
-
-
-
-
-
-
-    # fh.write('Frequency,')
-    # fh.write(str(freqlist).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SCC21 MLOG,')
-    # fh.write(str(scc21_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDC21 MLOG,')
-    # fh.write(str(sdc21_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD11 POL 1,')
-    # fh.write(str(sdd11_pol[0]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD11 POL 2,')
-    # fh.write(str(sdd11_pol[1]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD12 MLOG,')
-    # fh.write(str(sdd12_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 GDEL,')
-    # fh.write(str(sdd21_gdel).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 MLOG,')
-    # fh.write(str(sdd21_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 POL 1,')
-    # fh.write(str(sdd21_pol[0]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 POL 2,')
-    # fh.write(str(sdd21_pol[1]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD11 MLOG,')
-    # fh.write(str(sdd11_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD22 MLOG,')
-    # fh.write(str(sdd22_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('AV, ')
-    # fh.write(str(av).strip('[]'))
-    # fh.write('\n')
-    # fh.write('CMRR1, ')
-    # fh.write(str(cmrr1).strip('[]'))
-    # fh.write('\n')
-    # fh.write('CMRR2, ')
-    # fh.write(str(cmrr2).strip('[]'))
-    # fh.write('\n')
-    # fh.write('Group Delay,')
-    # fh.write(str(group_delay).strip('[]'))
-    # fh.write('\n')
-    # fh.write('S12_V,')
-    # fh.write(str(s12_v).strip('[]'))
-    # fh.write('\n')
 
 def header():
     test = 'IMD3'
@@ -321,25 +308,13 @@ numPoints = 1000.0
 startFreq = 10e6
 endFreq = 10.01e9
 
-measlist = ['SCC21 MLOG', 'SDC21 MLOG', 'SDD11 POL', 'SDD12 MLOG', 'SDD21 GDEL',
-            'SDD21 MLOG', 'SDD21 POL', 'SDD11 MLOG', 'SDD22 MLOG']
 
-templist = [25]
-vcomlist = ['N/A']
+
+
 
 VNAinit()
 
-for temp in templist:
-    # for balun in balunList:
-    if templist != [25]:
-        setTemp(temp)
-    # fh.write('Balun config = %s' % balun)
-    fh.write('Temp = %d' % temp)
-    fh.write('\n')
-    for vcom in vcomlist:
-        fh.write('Vcom = %s\n' % vcom)
-        # Supply.__SetV__(vcom, 3)  # Does nothing right now. Second supply not connected
-        getData()
+getData()
 
 endTime = time.time()- startTime
 
