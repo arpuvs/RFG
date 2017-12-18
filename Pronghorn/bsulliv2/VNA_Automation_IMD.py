@@ -7,7 +7,7 @@ from ADI_GPIB.E3631A import *
 from ADI_GPIB.KeysightN5242A import *
 
 VNA = KeysightN5424A(17)
-# Oven = WatlowF4(4)
+Oven = WatlowF4(4)
 # Supply = E3631A(23)
 
 
@@ -56,7 +56,7 @@ def VNAinit():
 
 
 def setTemp(setpoint):
-    print 'Assuming same oven set up as on my bench'
+    # print 'Assuming same oven set up as on my bench'
 
     Oven.__SetTemp__(setpoint)
     current = float(Oven.__GetTemp__())
@@ -99,6 +99,10 @@ def meas():
 
 def getData():
     readDict = {}
+    VNA.__EnableAvg__(1, False)
+    VNA.__EnableAvg__(1, True)
+    time.sleep(60)
+    print 'Done Sleeping'
     VNA.__FinishAvg__(1, 600)
     for meas in measlist:
         VNA.__SetActiveTrace__(1, meas)
@@ -176,16 +180,17 @@ def getData():
     # fh.write('\n')
 
 def header():
-    test = 'IMD3'
-    equipment = 'N5181A N9030A BAL0026 BAL006'
+    dut = '2-1 ChB'
+    test = 'PNA-X IMD'
+    equipment = 'BAL0026 6dB in and out '
     # supplyV = Supply.__MeasP25V__()
-    supplyV = 'Temp'
-    print supplyV
+    # supplyV = 'Temp'
+    # print supplyV
     # supplyI = Supply.__MeasP25I__()
-    supplyI = 'Temp'
-    print supplyI
-    balun = 'INB: 0-VIN OUTB 0-VOP'
-    header = (dut, date, test, equipment, supplyV, supplyI, balun)
+    # supplyI = 'Temp'
+    # print supplyI
+    # balun = 'INB: 0-VIN OUTB 0-VOP'
+    header = (dut, date, test, equipment)
     header = str(header).strip('()')
     fh.write(header)
     fh.write('\n')
@@ -218,9 +223,10 @@ startFreq = 10.5e6
 endFreq = 10.0105e9
 
 measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
-templist = [25]
+templist = [25, -40, 80]
 vcomlist = ['N\A']
 
+header()
 VNAinit()
 for temp in templist:
     # for balun in balunList:
