@@ -30,23 +30,43 @@ from openpyxl.utils import *
 
 # fh = open('Test.csv', 'w')
 
-wb = load_workbook(filename = 'openpyxlTest.xlsx')
-sheet_ranges = wb['Worksheet 3']
+wb = load_workbook(filename='C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\Test\\OutputTest.xlsx')
+sheet_ranges = wb['Sheet1']
 # print sheet_ranges
-# print sheet_ranges['AA']
+print sheet_ranges['A']
 
-AA = sheet_ranges['AA']
-print AA
-val = AA[12].value
+A = sheet_ranges['A']
+# print AA
+val = A[0].value
 print val
+#
+# print len(AA)
+freq = [1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9]
+data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+data2 = [10, 20, 30, 40, 50, 60, 70, 80, 90]
 
-print len(AA)
+datalabel = ['DataA', 'Data1_A']
 
-for row in range(len(AA)+1, len(AA) + 20):
-    for col in range(1,10):
-        sheet_ranges.cell(column=col, row=row, value='BS TEST 3')
+for row in range(len(A)+1, len(A) + len(data1) + 1):
+    # for col in range(1, 10):
+    for i in range(len(datalabel)):
+        sheet_ranges.cell(column=i+1, row=row, value=datalabel[i])
+    sheet_ranges.cell(column=i+2, row=row, value=freq[row - (len(A) + 1)])
+    sheet_ranges.cell(column=i+3, row=row, value=data1[row - (len(A) + 1)])
 
-wb.save(filename = 'openpyxlTest.xlsx')
+datalabel[1] = 'Data1_B'
+A = sheet_ranges['A']
+
+for row in range(len(A)+1, len(A) + len(data2) + 1):
+    # for col in range(1, 10):
+    for i in range(len(datalabel)):
+        sheet_ranges.cell(column=i+1, row=row, value=datalabel[i])
+    sheet_ranges.cell(column=i+2, row=row, value=freq[row - (len(A) + 1)])
+    sheet_ranges.cell(column=i+3, row=row, value=data2[row - (len(A) + 1)])
+        # sheet_ranges.cell(column=2, row=row, value='Data1A')
+        # sheet_ranges.cell(column=3, row=row, value='Data1')
+
+wb.save(filename='C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\Test\\OutputTest.xlsx')
 # wb = Workbook()
 #
 # dest_filename = 'openpyxlTest.xlsx'
