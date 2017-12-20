@@ -10,6 +10,7 @@ from ADI_GPIB.AgilentN9030A import *
 from ADI_GPIB.AgilentN6705B import *
 from ADI_GPIB.WatlowF4 import *
 from FMB import *
+from openpyxl import *
 
 # Instrument initialization
 Supply = AgilentN6705B(26)
@@ -59,12 +60,16 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             Analyzer.__ClearAverage__()
 
             # Sets initial amplitude using measured output of dut
+
             Analyzer.__CheckStatus__(300)                     # Waits until averaging is complete
+            time.sleep(0.5)
+            Analyzer.__ClearAverage__()
+            Analyzer.__CheckStatus__(300)
             carrierMag = float(Analyzer.__GetMarkerAmp__(1))  # Gets initial amplitude
             while abs(carrierMag - -2) >= 0.1:                # Adjusts amplitude until it is within 0.1 dBm of desired
                 sourceAmp = float(Source.__GetAmp__())
                 setAmp = sourceAmp + (-2 - carrierMag)
-                if setAmp > 12:
+                if setAmp > 15:
                     raise Exception('Max source amplitude exceeded')
                 Source.__SetAmp__(setAmp)
                 Analyzer.__ClearAverage__()
@@ -99,28 +104,15 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             secondNormal.append(-(float(Carrier[j]) - float(second[j])))
             thirdNormal.append(-(float(Carrier[j]) - float(third[j])))
 
-        # Writes all measured parameters to file
-        fh.write('Frequency:,')
-        fh.write(str(freqlistReal).strip('[]'))
-        fh.write('\n')
-        fh.write('Supply Current:,')
-        fh.write(str(supplyI).strip('[]'))
-        fh.write('\n')
-        fh.write('Carrier:,')
-        fh.write(str(Carrier).strip('[]'))
-        fh.write('\n')
-        fh.write('Second:,')
-        fh.write(str(second).strip('[]'))
-        fh.write('\n')
-        fh.write('Third:,')
-        fh.write(str(third).strip('[]'))
-        fh.write('\n')
-        fh.write('Second dBc:,')
-        fh.write(str(secondNormal).strip('[]'))
-        fh.write('\n')
-        fh.write('Third dBc:,')
-        fh.write(str(thirdNormal).strip('[]'))
-        fh.write('\n')
+        Acolumn = sheet_ranges['A']
+
+        index = 0
+        for row in range(len(Acolumn)+1, len(Acolumn) + len(freqlistReal) + 1):
+            data = [dut, channel, temp, freqlistReal[index], supplyV, supplyI[index], vcom, Carrier[index],
+                    second[index], third[index], secondNormal[index], thirdNormal[index]]
+            for col in range(len(data)):
+                sheet_ranges.cell(column=col+1, row=row, value=data[col])
+            index = index + 1
 
     # P3dB function. May remain unused if measurement is easier with the PNX.
     # Probably needs to be modified to actually use.
@@ -240,7 +232,8 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
         soak = 300
         time.sleep(soak)
         return True
-
+    Analyzer.__SetAutoAtten__(0)
+    Analyzer.__SetAtten__(22)
     # Filter box frequency settings dictionary
     fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
               5: "120 MHz", 6: "225.3 MHz", 7: "350.3 MHz", 8: "500 MHz",
@@ -255,13 +248,22 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     date = time.ctime(time.time())
     date = date.replace(':', '.')
     # fh = open('P3dB' + date + '.csv', 'w')
-    fh = open(path + 'HD23' + date + '.csv', 'w')
+    # fh = open(path + 'HD23' + date + '.csv', 'w')
+    try:
+        wb = load_workbook(filename=path)
+    except:
+        wb = Workbook()
+        ws1 = wb.active
+        ws1.title = 'Sheet1'
+    sheet_ranges = wb['Sheet1']
 
-    header(dutNumber)  # Prints header line
+
+    # header(dutNumber)  # Prints header line
 
     # Sets up main supply
     # Vsupply = Ch1, Ven = Ch2, Vcom = Ch3
-    Supply.__SetV__(5, 1)
+    supplyV = 5
+    Supply.__SetV__(supplyV, 1)
     Supply.__SetI__(0.25, 1)
 
 
@@ -271,12 +273,12 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     for temp in templist:
         if templist != [25]:
             setTemp(temp)                       # Sets DUT to temperature
-        fh.write('Temp = %d' % temp)
-        fh.write('\n')
+        # fh.write('Temp = %d' % temp)
+        # fh.write('\n')
         for vcom in vcomlist:
             Supply.__SetV__(vcom, 3)        # Sets DUT to common mode voltage
             print 'Vcom = %g' % vcom
-            fh.write('Vcom = %g\n' % vcom)
+            # fh.write('Vcom = %g\n' % vcom)
             Source.__SetState__(0)
             print 'Aligning...'
             Analyzer.__CheckStatus__(300)
@@ -289,15 +291,16 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     if templist != [25]:
         Oven.__SetTemp__(25)
     print time.time()-startTime
-    fh.write('Execution time (s) = %g' % (time.time() - startTime))
-    fh.close()
+    # fh.write('Execution time (s) = %g' % (time.time() - startTime))
+    # fh.close()
+    wb.save(filename=path)
     print 'Done!'
 
 
 # Called if program run by itself
 if __name__ == '__main__':
     # Sets all necessary variables
-    path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\HD23\\'
+    path = 'C:\\Users\\#RFW_Test01\\Desktop\\5569_Data\\Hd23\\Test.xlsx'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
     freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     # freqs = [12]
@@ -307,7 +310,9 @@ if __name__ == '__main__':
     # vcoms = [2.0, 2.5, 3.0]
     vcoms = [2.5]
     # temps = [25, 85, -40]
+    # temps = [25,-40,85]
     temps = [25]
-    dut = 0
+    dut = '2-1'
+    channel = 'B'
 
     HD23Main(path, freqs, vcoms, temps, dut)  # Calls main program
