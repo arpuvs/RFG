@@ -156,6 +156,7 @@ def lumped(mlog):
 
 def getData():
     readDict = {}
+    time.sleep(30)
     VNA.__FinishAvg__(1,600)
     for meas in measlist:
         VNA.__SetActiveTrace__(1, meas)
@@ -280,16 +281,11 @@ def getData():
     # fh.write('\n')
 
 def header():
-    test = 'IMD3'
-    equipment = 'N5181A N9030A BAL0026 BAL006'
+    test = 'P1dB'
+    equipment = 'N5242A PNA-X BAL0026'
     # supplyV = Supply.__MeasP25V__()
-    supplyV = 'Temp'
-    print supplyV
     # supplyI = Supply.__MeasP25I__()
-    supplyI = 'Temp'
-    print supplyI
-    balun = 'INB: 0-VIN OUTB 0-VOP'
-    header = (dut, date, test, equipment, supplyV, supplyI, balun)
+    header = (dut, date, test, equipment)
     header = str(header).strip('()')
     fh.write(header)
     fh.write('\n')
@@ -311,7 +307,7 @@ path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\'
 
 date = time.ctime(time.time())
 date = date.replace(':', '-')
-fh = open(path + 'Intermod_Dist_' + date + '.csv', 'w')
+fh = open(path + 'SParam_' + date + '.csv', 'w')
 
 Zin_diff = 100
 Zout_diff = 100
@@ -326,6 +322,9 @@ measlist = ['SCC21 MLOG', 'SDC21 MLOG', 'SDD11 POL', 'SDD12 MLOG', 'SDD21 GDEL',
 
 templist = [25]
 vcomlist = ['N/A']
+dut = '3-5 CHB'
+
+header()
 
 VNAinit()
 
@@ -340,8 +339,8 @@ for temp in templist:
         fh.write('Vcom = %s\n' % vcom)
         # Supply.__SetV__(vcom, 3)  # Does nothing right now. Second supply not connected
         getData()
-
-endTime = time.time()- startTime
+Oven.__SetTemp__(25)
+endTime = time.time() - startTime
 
 print 'Program executed in %d seconds.' % endTime
 

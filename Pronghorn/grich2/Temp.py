@@ -1,16 +1,17 @@
-import sys, visa, time
+import sys, visa, time, smtplib
+
 # sys.path.append('../../Common/FMB_USB_Python_Files')
 sys.path.append('../../Common')
 # # C:\Git_Repositories\RFG\Common\FMB_USB_Python_Files
 # from ADI_GPIB.AgilentN5181A import *
-from ADI_GPIB.AgilentN9030A import *
+# from ADI_GPIB.AgilentN9030A import *
 # # from ADI_GPIB.AgilentN6705B import *
 # from FMB import *
 #
 # import xlsxwriter
-import openpyxl
-from openpyxl import *
-from openpyxl.utils import *
+# import openpyxl
+# from openpyxl import *
+# from openpyxl.utils import *
 # import atexit
 #
 # def exit_handler():
@@ -30,43 +31,50 @@ from openpyxl.utils import *
 
 # fh = open('Test.csv', 'w')
 
-wb = load_workbook(filename='C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\Test\\OutputTest.xlsx')
-sheet_ranges = wb['Sheet1']
-# print sheet_ranges
-print sheet_ranges['A']
 
-A = sheet_ranges['A']
-# print AA
-val = A[0].value
-print val
+server = smtplib.SMTP('smtp.gmail.com', 587)
+server.elho()
+server.starttls()
+server.login("RFMGLabNotification@gmail.com", 'rfmglab01')
+server.sendmail('RFMGLabNotification@gmail.com', 'Ben.Sullivan@analog.com', 'Testing')
+server.quit()
+# wb = load_workbook(filename='C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\Test\\OutputTest.xlsx')
+# sheet_ranges = wb['Sheet1']
+# # print sheet_ranges
+# print sheet_ranges['A']
 #
-# print len(AA)
-freq = [1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9]
-data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-data2 = [10, 20, 30, 40, 50, 60, 70, 80, 90]
-
-datalabel = ['DataA', 'Data1_A']
-
-for row in range(len(A)+1, len(A) + len(data1) + 1):
-    # for col in range(1, 10):
-    for i in range(len(datalabel)):
-        sheet_ranges.cell(column=i+1, row=row, value=datalabel[i])
-    sheet_ranges.cell(column=i+2, row=row, value=freq[row - (len(A) + 1)])
-    sheet_ranges.cell(column=i+3, row=row, value=data1[row - (len(A) + 1)])
-
-datalabel[1] = 'Data1_B'
-A = sheet_ranges['A']
-
-for row in range(len(A)+1, len(A) + len(data2) + 1):
-    # for col in range(1, 10):
-    for i in range(len(datalabel)):
-        sheet_ranges.cell(column=i+1, row=row, value=datalabel[i])
-    sheet_ranges.cell(column=i+2, row=row, value=freq[row - (len(A) + 1)])
-    sheet_ranges.cell(column=i+3, row=row, value=data2[row - (len(A) + 1)])
-        # sheet_ranges.cell(column=2, row=row, value='Data1A')
-        # sheet_ranges.cell(column=3, row=row, value='Data1')
-
-wb.save(filename='C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\Test\\OutputTest.xlsx')
+# A = sheet_ranges['A']
+# # print AA
+# val = A[0].value
+# print val
+# #
+# # print len(AA)
+# freq = [1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9, 8e9, 9e9]
+# data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+# data2 = [10, 20, 30, 40, 50, 60, 70, 80, 90]
+#
+# datalabel = ['DataA', 'Data1_A']
+#
+# for row in range(len(A)+1, len(A) + len(data1) + 1):
+#     # for col in range(1, 10):
+#     for i in range(len(datalabel)):
+#         sheet_ranges.cell(column=i+1, row=row, value=datalabel[i])
+#     sheet_ranges.cell(column=i+2, row=row, value=freq[row - (len(A) + 1)])
+#     sheet_ranges.cell(column=i+3, row=row, value=data1[row - (len(A) + 1)])
+#
+# datalabel[1] = 'Data1_B'
+# A = sheet_ranges['A']
+#
+# for row in range(len(A)+1, len(A) + len(data2) + 1):
+#     # for col in range(1, 10):
+#     for i in range(len(datalabel)):
+#         sheet_ranges.cell(column=i+1, row=row, value=datalabel[i])
+#     sheet_ranges.cell(column=i+2, row=row, value=freq[row - (len(A) + 1)])
+#     sheet_ranges.cell(column=i+3, row=row, value=data2[row - (len(A) + 1)])
+#         # sheet_ranges.cell(column=2, row=row, value='Data1A')
+#         # sheet_ranges.cell(column=3, row=row, value='Data1')
+#
+# wb.save(filename='C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\Test\\OutputTest.xlsx')
 # wb = Workbook()
 #
 # dest_filename = 'openpyxlTest.xlsx'
