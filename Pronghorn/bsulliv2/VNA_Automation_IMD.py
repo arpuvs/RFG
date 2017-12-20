@@ -51,6 +51,8 @@ def VNAinit():
     # VNA.__SetPorts__(2, 1, 3, 2, 4)
     # VNA.__EnableBal__(2)
     VNA.instr.write('SENS:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
+    VNA.instr.write('SENS:POW:ATT AREC,10')
+    VNA.instr.write('SENS:POW:ATT BREC,10')
     VNA.__EnableAvg__(1, True)
     VNA.__SetAvg__(1, avg)
 
@@ -223,7 +225,7 @@ startFreq = 10.5e6
 endFreq = 10.0105e9
 
 measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
-templist = [25, -40, 80]
+templist = [25]
 vcomlist = ['N\A']
 
 header()
