@@ -8,7 +8,7 @@ from ADI_GPIB.KeysightN5242A import *
 
 VNA = KeysightN5424A(17)
 Oven = WatlowF4(4)
-# Supply = E3631A(23)
+Supply = E3631A(23)
 
 
 def VNAinit():
@@ -216,6 +216,7 @@ templist = [25, -40, 80]
 vcomlist = ['N\A']
 
 header()
+Supply.__SetEnable(1)
 VNAinit()
 for temp in templist:
     # for balun in balunList:
@@ -228,7 +229,9 @@ for temp in templist:
         fh.write('Vcom = %s\n' % vcom)
         # Supply.__SetV__(vcom, 3)  # Does nothing right now. Second supply not connected
         getData()
-Oven.__SetTemp__(25)
+if templist != [25]:
+    Oven.__SetTemp__(25)
+Supply.__SetEnable__(0)
 endTime = time.time() - startTime
 
 print 'Program executed in %d seconds.' % endTime
