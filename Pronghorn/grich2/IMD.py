@@ -17,7 +17,7 @@ Analyzer = AgilentN9030A(18)
 Oven = WatlowF4(4)
 startTime = time.time()
 
-def IMD3main(path, freqlist, vcomlist, templist, dut, channel):
+def IMD3main(path, freqlist, vcomlist, templist, dut):
     # Main IMD measurement program
     def IMD3():
         # Initializes spectrum analyzer for measurements
@@ -146,7 +146,7 @@ def IMD3main(path, freqlist, vcomlist, templist, dut, channel):
         supplyI = 'Temp'
         print supplyI
         balun = 'INB: 0-VIN OUTB 0-VOP'
-        header = (dut, date, test, equipment, supplyV, supplyI, balun, channel)
+        header = (dut, date, test, equipment, supplyV, supplyI, balun)
         header = str(header).strip('()')
         fh.write(header)
         fh.write('\n')
@@ -206,12 +206,11 @@ def IMD3main(path, freqlist, vcomlist, templist, dut, channel):
     # Final clean up actions
     if templist != [25]:
         Oven.__SetTemp__(25)
-    Supply.__Enable__(0, [1, 3])
     print (time.time()-startTime)
     fh.write('Execution time (s) = %g' % (time.time() - startTime))
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\#RFW_Test01\\Desktop\\5569_Data\\'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\IMD3\\'
     freqs = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9, 4.5e9, 5.0e9, 5.5e9, 5.9e9]
     # freqs = [6e9]
     # vcoms = []
@@ -220,9 +219,8 @@ if __name__ == '__main__':
     # vcoms = [2.0, 2.5, 3.0]
     vcoms = [2.5]
     # temps = [25, 85, -40]
-    temps = [25, -40, 85]
-    dut = '3-6'
-    channel = 'B'
+    temps = [25]
+    dut = '4-3'
 
-    IMD3main(path, freqs, vcoms, temps, dut, channel)  # Calls main program
+    IMD3main(path, freqs, vcoms, temps, dut)  # Calls main program
 

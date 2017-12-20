@@ -59,16 +59,12 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             Analyzer.__ClearAverage__()
 
             # Sets initial amplitude using measured output of dut
-
             Analyzer.__CheckStatus__(300)                     # Waits until averaging is complete
-            time.sleep(0.5)
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
             carrierMag = float(Analyzer.__GetMarkerAmp__(1))  # Gets initial amplitude
-            while abs(carrierMag - -2) >= 0.1:                # Adjusts amplitude until it is within 0.1 dBm of desired
+            while abs(carrierMag - 4) >= 0.1:                # Adjusts amplitude until it is within 0.1 dBm of desired
                 sourceAmp = float(Source.__GetAmp__())
-                setAmp = sourceAmp + (-2 - carrierMag)
-                if setAmp > 15:
+                setAmp = sourceAmp + (4 - carrierMag)
+                if setAmp > 12:
                     raise Exception('Max source amplitude exceeded')
                 Source.__SetAmp__(setAmp)
                 Analyzer.__ClearAverage__()
@@ -244,8 +240,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
         soak = 300
         time.sleep(soak)
         return True
-    Analyzer.__SetAutoAtten__(0)
-    Analyzer.__SetAtten__(22)
+
     # Filter box frequency settings dictionary
     fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
               5: "120 MHz", 6: "225.3 MHz", 7: "350.3 MHz", 8: "500 MHz",
@@ -302,9 +297,9 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
 # Called if program run by itself
 if __name__ == '__main__':
     # Sets all necessary variables
-    path = 'C:\\Users\\#RFW_Test01\\Desktop\\5569_Data\\'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\HD23\\'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
-    freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    freqs = [8, 10, 11, 12, 13, 14, 15, 16, 17]
     # freqs = [12]
     # vcoms = []
     # for i in range(20, 31):
@@ -312,8 +307,7 @@ if __name__ == '__main__':
     # vcoms = [2.0, 2.5, 3.0]
     vcoms = [2.5]
     # temps = [25, 85, -40]
-    temps = [25,-40,85]
-    # temps = [25]
-    dut = '2-1 ChB'
+    temps = [25]
+    dut = 0
 
     HD23Main(path, freqs, vcoms, temps, dut)  # Calls main program

@@ -101,7 +101,6 @@ def original():
     # VNA.__SetContinuous__(2, False)
     VNA.__EnableAvg__(2, True)
     VNA.instr.write('SENS2:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
-    VNA.instr.write('SENS2:GCS:POW:STOP:LEV 10')
     # VNA.__EnableTrigAvg__(True)
     # VNA.__SetTopology__(2, 'BBAL')
     # VNA.__SetPorts__(2, 1, 3, 2, 4)
@@ -211,14 +210,7 @@ def IMD():
     for meas in measlist:
         VNA.__SetActiveTrace__(2, meas)
         print VNA.__GetData__(2)
-#
-# VNA.__SetAvg__(2, 10)
-# VNA.__EnableAvg__(2, False)
-# VNA.__EnableAvg__(2, True)
-# VNA.instr.write('SENS2:GCS:POW:STOP:LEV 10')
-# VNA.instr.write('SENS2:IMD:TPOW:F1:STOP 10')
-# VNA.instr.write('SENS2:IMD:TPOW:F2:STOP 10')
-# original()
+
 # VNA.instr.write('SENS:)
 # original()
 # freqlist = VNA.__GetFreq__(2)
@@ -227,23 +219,23 @@ def IMD():
 #     freqlist[val] = float(freqlist[val])
 # print freqlist
 #
-freqlist = VNA.__GetFreq__(3)
-freqlist = freqlist.split(',')
-for val in range(len(freqlist)):
-    freqlist[val] = float(freqlist[val])
-print freqlist
-meas = 'P1dB'
-VNA.__SetActiveTrace__(2, meas)
-# VNA.__CheckStatus__(600)
-# for i in range(avg):
-#     VNA.__InitMeas__(1)
-#     VNA.__CheckStatus__(600)
-ans = VNA.__GetData__(2)
-ans = ans.split(',')
-for val in range(len(ans)):
-    ans[val] = float(ans[val])
-P1dB = ans
-print P1dB
+# freqlist = VNA.__GetFreq__(3)
+# freqlist = freqlist.split(',')
+# for val in range(len(freqlist)):
+#     freqlist[val] = float(freqlist[val])
+# print freqlist
+# meas = 'P1dB'
+# VNA.__SetActiveTrace__(2, meas)
+# # VNA.__CheckStatus__(600)
+# # for i in range(avg):
+# #     VNA.__InitMeas__(1)
+# #     VNA.__CheckStatus__(600)
+# ans = VNA.__GetData__(2)
+# ans = ans.split(',')
+# for val in range(len(ans)):
+#     ans[val] = float(ans[val])
+# P1dB = ans
+# print P1dB
 #
 # meas = 'NF'
 # VNA.__SetActiveTrace__(3, meas)

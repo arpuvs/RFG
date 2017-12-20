@@ -28,31 +28,49 @@ def VNAinit():
     # VNA.__EnableBal__(1)
     # VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
 
-    VNA.__Preset__('full')
-    # VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
+    VNA.__Preset__()
     VNA.__AddWindow__(1)
-    # VNA.__AddMeas__(1, 'PwrMainHi', 'Swept IMD', 'PwrMainHi')
-    trace = 1
-    for meas in measlist:
-        VNA.__AddMeas__(1, meas, 'Swept IMD', meas)
-        VNA.__AddTrace__(1, trace, meas)
-        trace = trace + 1
+    VNA.__AddMeas__(1, 'P1dB', 'Gain Compression', 'CompOut21')
+    VNA.__AddTrace__(1, 1, 'P1dB')
+    # VNA.__SetSweepType__(2, 'LOG')
+    VNA.__SetStartf__(1, 10.5e6)
     VNA.__SetStopf__(1, 10.0105e9)
     VNA.__SetNumPoints__(1, 1e3)
     VNA.__SetAvg__(1, avg)
+    VNA.__SetSweepType__(1, 'LOG')
     VNA.__SetAutoTime__(1, True)
     # VNA.__SetTrigType__('MAN')
-    # VNA.__SetContinuous__(1, False)
-    VNA.__EnableAvg__(1, True)
-    VNA.__IMDPowType__(1, 'OUTPUT')
-    VNA.__IMDPower__(1, -8)
+    # VNA.__SetContinuous__(2, False)
+    # VNA.__EnableAvg__(1, True)
+    VNA.instr.write('SENS2:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
+    VNA.instr.write('SENS2:GCS:POW:STOP:LEV 10')
     # VNA.__EnableTrigAvg__(True)
-    # VNA.__SetTopology__(2, 'BBAL')
-    # VNA.__SetPorts__(2, 1, 3, 2, 4)
-    # VNA.__EnableBal__(2)
-    VNA.instr.write('SENS:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
-    VNA.__EnableAvg__(1, True)
-    VNA.__SetAvg__(1, avg)
+
+    # VNA.__Preset__('full')
+    # # VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
+    # VNA.__AddWindow__(1)
+    # # VNA.__AddMeas__(1, 'PwrMainHi', 'Swept IMD', 'PwrMainHi')
+    # trace = 1
+    # for meas in measlist:
+    #     VNA.__AddMeas__(1, meas, 'Swept IMD', meas)
+    #     VNA.__AddTrace__(1, trace, meas)
+    #     trace = trace + 1
+    # VNA.__SetStopf__(1, 10.0105e9)
+    # VNA.__SetNumPoints__(1, 1e3)
+    # VNA.__SetAvg__(1, avg)
+    # VNA.__SetAutoTime__(1, True)
+    # # VNA.__SetTrigType__('MAN')
+    # # VNA.__SetContinuous__(1, False)
+    # VNA.__EnableAvg__(1, True)
+    # VNA.__IMDPowType__(1, 'OUTPUT')
+    # VNA.__IMDPower__(1, -8)
+    # # VNA.__EnableTrigAvg__(True)
+    # # VNA.__SetTopology__(2, 'BBAL')
+    # # VNA.__SetPorts__(2, 1, 3, 2, 4)
+    # # VNA.__EnableBal__(2)
+    # VNA.instr.write('SENS:CORR:CSET:ACT \"BS_IMD_Cal\", 1')
+    # VNA.__EnableAvg__(1, True)
+    # VNA.__SetAvg__(1, avg)
 
 
 def setTemp(setpoint):
@@ -71,32 +89,6 @@ def setTemp(setpoint):
 
 # def setSupply():
 
-def meas():
-    VNA.__CheckStatus__(600)
-    for run in range(avg):
-        VNA.__InitMeas__(1)
-        VNA.__CheckStatus__(600)
-    # VNA.__SingleTrig__()  # ERROR: Unidentified header
-    ans = VNA.__GetData__(1)
-    ans = ans.split(',')
-    for val in range(len(ans)):
-        ans[val] = float(ans[val])
-    # magans = []
-    # imagans = []
-    # for val in range(len(ans)):
-    #     if (val % 2) == 0:
-    #         magans.append(float(ans[val]))
-    #     else:
-    #         imagans.append(float(ans[val]))
-
-    # compans = []
-    # for val in range(len(magans)):
-    #     compans.append(magans[val] + imagans[val] * 1j)
-
-    # return compans
-    # return magans, imagans
-    return ans
-
 def getData():
     readDict = {}
     VNA.__EnableAvg__(1, False)
@@ -104,28 +96,25 @@ def getData():
     time.sleep(60)
     print 'Done Sleeping'
     VNA.__FinishAvg__(1, 600)
-    for meas in measlist:
-        VNA.__SetActiveTrace__(1, meas)
-        # VNA.__CheckStatus__(600)
-        # for i in range(avg):
-        #     VNA.__InitMeas__(1)
-        #     VNA.__CheckStatus__(600)
-        ans = VNA.__GetData__(1)
-        ans = ans.split(',')
-        for val in range(len(ans)):
-            ans[val] = float(ans[val])
-        readDict[meas] = ans
+
+    VNA.__SetActiveTrace__(1, 'P1dB')
+    # VNA.__CheckStatus__(600)
+    # for i in range(avg):
+    #     VNA.__InitMeas__(1)
+    #     VNA.__CheckStatus__(600)
+    ans = VNA.__GetData__(1)
+    ans = ans.split(',')
+    for val in range(len(ans)):
+        ans[val] = float(ans[val])
+    P1dB = ans
 
     freqlist = VNA.__GetFreq__(1)
     fh.write('Frequency,')
     fh.write(str(freqlist).strip('[]'))
     fh.write('\n')
-    for meas in measlist:
-        fh.write(meas)
-        fh.write(',')
-        fh.write(str(readDict[meas]).strip('[]'))
-        fh.write('\n')
-    #
+    fh.write('P1dB,')
+    fh.write(str(P1dB).strip('[]'))
+    fh.write('\n')
     #
     # fh.write('Frequency,')
     # fh.write(str(freqlist).strip('[]'))
@@ -180,7 +169,7 @@ def getData():
     # fh.write('\n')
 
 def header():
-    dut = '3-5 ChB'
+    dut = '3-5 ChA'
     test = 'PNA-X IMD'
     equipment = 'BAL0026 6dB in and out '
     # supplyV = Supply.__MeasP25V__()
@@ -208,11 +197,11 @@ def header():
 
 startTime = time.time()
 
-path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\IMD\\'
+path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\P1dB\\'
 
 date = time.ctime(time.time())
 date = date.replace(':', '-')
-fh = open(path + 'VNA_IMD' + date + '.csv', 'w')
+fh = open(path + 'P1dB' + date + '.csv', 'w')
 
 Zin_diff = 100
 Zout_diff = 100
