@@ -300,7 +300,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
 # Called if program run by itself
 if __name__ == '__main__':
     # Sets all necessary variables
-    path = 'C:\\Users\\#RFW_Test01\\Desktop\\5569_Data\\Hd23\\Test.xlsx'
+    path = 'C:\\Users\\#RFW_Test01\\Desktop\\5569_Data\\Hd23\\HD23.xlsx'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
     freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     # freqs = [12]
@@ -311,8 +311,8 @@ if __name__ == '__main__':
     vcoms = [2.5]
     # temps = [25, 85, -40]
     # temps = [25,-40,85]
-    temps = [25]
-    dut = '2-1'
+    temps = [25,-40,85]
+    dut = '3-6'
     channel = 'B'
 
     HD23Main(path, freqs, vcoms, temps, dut)  # Calls main program
