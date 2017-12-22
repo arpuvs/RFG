@@ -18,14 +18,10 @@ def VNAinit():
     VNA.__SetStopf__(1, endFreq)
     VNA.__SetNumPoints__(1, numPoints)
     VNA.__SetAutoTime__(1, True)
-    # VNA.__SetTrigType__('MAN')
-    # VNA.__SetContinuous__(1, False)
     VNA.__EnableAvg__(1, False)
-    # VNA.__EnableTrigAvg__(True)
     VNA.__SetTopology__(1, 'BBAL')
     VNA.__SetPorts__(1, 1, 3, 2, 4)
     VNA.__EnableBal__(1)
-    # VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
     VNA.__RemoveTrace__(1, 1)
     trace = 1
     for meas in measlist:
@@ -34,26 +30,18 @@ def VNAinit():
         VNA.__SetActiveTrace__(1, meas)
         VNA.__SetActiveFormat__(1, meas.split()[1])
         trace = trace + 1
-
-
-    # VNA.__SetTopology__(1, 'BBAL')
-    # VNA.__SetPorts__(1, 1, 3, 2, 4)
-    # VNA.__EnableBal__(1)
-    VNA.instr.write('SENS:CORR:CSET:ACT \"BS_Cal\", 1')
+    VNA.__RecallCal__('BS_Cal')
     VNA.__EnableAvg__(1, True)
     VNA.__SetAvg__(1, avg)
 
 
 def setTemp(setpoint):
-    print 'Assuming same oven set up as on my bench'
-
     Oven.__SetTemp__(setpoint)
     current = float(Oven.__GetTemp__())
     while (abs(current - setpoint) > 2):
         time.sleep(1)
         current = float(Oven.__GetTemp__())
     print '@ Temp %d' % setpoint
-    # if temp != 25:
     time.sleep(300)
     return True
 
@@ -64,25 +52,10 @@ def meas():
     for run in range(avg):
         VNA.__InitMeas__(1)
         VNA.__CheckStatus__(600)
-    # VNA.__SingleTrig__()  # ERROR: Unidentified header
     ans = VNA.__GetData__(1)
     ans = ans.split(',')
     for val in range(len(ans)):
         ans[val] = float(ans[val])
-    # magans = []
-    # imagans = []
-    # for val in range(len(ans)):
-    #     if (val % 2) == 0:
-    #         magans.append(float(ans[val]))
-    #     else:
-    #         imagans.append(float(ans[val]))
-
-    # compans = []
-    # for val in range(len(magans)):
-    #     compans.append(magans[val] + imagans[val] * 1j)
-
-    # return compans
-    # return magans, imagans
     return ans
 
 
@@ -103,13 +76,12 @@ def build_cmrr(sdd21, sdc21):
 def build_gdel(phase, freq):
     ans = []
     ans.append(0)
-    # print len(phase)
-    # print len(freq)
     for val in range(len(phase) - 1):
         ans.append(((phase[val+1] - phase[val])*math.pi/180.0)/(freq[val+1]-freq[val]))
     return ans
 
 def lumped(mlog):
+    #Currently unused
     val = []
 
     Zin_mag = []
@@ -224,82 +196,14 @@ def getData():
     fh.write('\n')
 
 
-
-
-
-
-    # fh.write('Frequency,')
-    # fh.write(str(freqlist).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SCC21 MLOG,')
-    # fh.write(str(scc21_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDC21 MLOG,')
-    # fh.write(str(sdc21_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD11 POL 1,')
-    # fh.write(str(sdd11_pol[0]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD11 POL 2,')
-    # fh.write(str(sdd11_pol[1]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD12 MLOG,')
-    # fh.write(str(sdd12_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 GDEL,')
-    # fh.write(str(sdd21_gdel).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 MLOG,')
-    # fh.write(str(sdd21_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 POL 1,')
-    # fh.write(str(sdd21_pol[0]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD21 POL 2,')
-    # fh.write(str(sdd21_pol[1]).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD11 MLOG,')
-    # fh.write(str(sdd11_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('SDD22 MLOG,')
-    # fh.write(str(sdd22_mlog).strip('[]'))
-    # fh.write('\n')
-    # fh.write('AV, ')
-    # fh.write(str(av).strip('[]'))
-    # fh.write('\n')
-    # fh.write('CMRR1, ')
-    # fh.write(str(cmrr1).strip('[]'))
-    # fh.write('\n')
-    # fh.write('CMRR2, ')
-    # fh.write(str(cmrr2).strip('[]'))
-    # fh.write('\n')
-    # fh.write('Group Delay,')
-    # fh.write(str(group_delay).strip('[]'))
-    # fh.write('\n')
-    # fh.write('S12_V,')
-    # fh.write(str(s12_v).strip('[]'))
-    # fh.write('\n')
-
 def header():
     test = 'P1dB'
     equipment = 'N5242A PNA-X BAL0026'
-    # supplyV = Supply.__MeasP25V__()
-    # supplyI = Supply.__MeasP25I__()
     header = (dut, date, test, equipment)
     header = str(header).strip('()')
     fh.write(header)
     fh.write('\n')
 
-
-
-
-
-
-
-    # VNA.__SetBBalParam__(1, 1, 'SDD12')     # Doesn't seem to change to SDD12
-    # VNA.__SetActiveFormat__(1, 'MLOG')
-    # sdd12_mlog = meas()
-    # print sdd12_mlog
 
 startTime = time.time()
 
@@ -329,10 +233,8 @@ Supply.__SetEnable__(1)
 VNAinit()
 
 for temp in templist:
-    # for balun in balunList:
     if templist != [25]:
         setTemp(temp)
-    # fh.write('Balun config = %s' % balun)
     fh.write('Temp = %d' % temp)
     fh.write('\n')
     for vcom in vcomlist:
@@ -349,18 +251,3 @@ print 'Program executed in %d seconds.' % endTime
 fh.write('Execution Time = ,%d' % endTime)
 
 fh.close()
-# supplies = [5.0]
-# temps = [25]
-# currents = []
-#
-# VNAinit()
-# for temp in temps:
-#     # setTemp(temp)
-#     for supply in supplies:
-#         # setSupply()
-#         supply.__SetP6V__(supply)
-#         supply.__SetP25V__(3.3)
-#         currents.append(float(supply.__MeasP6I__()))
-#
-#         getData()
-

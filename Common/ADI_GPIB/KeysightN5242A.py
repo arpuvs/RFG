@@ -140,6 +140,16 @@ class KeysightN5424A(GPIBObjectBaseClass):
         else:
             self.instr.write('SYST:PRES')
 
+    def __SetAttenuation__(self, level):
+        self.instr.write('SENS:POW:ATT AREC,%d' % level)
+        self.instr.write('SENS:POW:ATT BREC,%d' % level)
+
+    def __RecallCal__(self, filename):
+        self.instr.write('SENS:CORR:CSET:ACT \"%s\", 1' % filename)
+
+    def __GainCompMaxLevel(self, channel, level):
+        self.instr.write('SENS%d:GCS:POW:STOP:LEV %d' % (channel, level))
+
     def __FinishAvg__(self, channel, maxWait):
         endtime = time.time() + maxWait
         while True:
