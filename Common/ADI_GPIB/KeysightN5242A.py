@@ -147,7 +147,7 @@ class KeysightN5424A(GPIBObjectBaseClass):
     def __RecallCal__(self, filename):
         self.instr.write('SENS:CORR:CSET:ACT \"%s\", 1' % filename)
 
-    def __GainCompMaxLevel(self, channel, level):
+    def __GainCompMaxLevel__(self, channel, level):
         self.instr.write('SENS%d:GCS:POW:STOP:LEV %d' % (channel, level))
 
     def __FinishAvg__(self, channel, maxWait):

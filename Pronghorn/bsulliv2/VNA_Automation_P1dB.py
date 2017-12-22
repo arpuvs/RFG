@@ -12,7 +12,7 @@ Supply = E3631A(23)
 
 
 def VNAinit():
-    VNA.__Preset__()
+    VNA.__Preset__('full')
     VNA.__AddWindow__(1)
     VNA.__AddMeas__(1, 'P1dB', 'Gain Compression', 'CompOut21')
     VNA.__AddTrace__(1, 1, 'P1dB')
@@ -83,12 +83,11 @@ startFreq = 10.5e6
 endFreq = 10.0105e9
 
 measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
-# templist = [25, -40, 80]
-templist = [25]
+templist = [25, -40, 80]
 vcomlist = ['N\A']
 
 header()
-Supply.__SetEnable(1)
+Supply.__SetEnable__(1)
 VNAinit()
 for temp in templist:
     if templist != [25]:

@@ -93,7 +93,7 @@ startFreq = 10.5e6
 endFreq = 10.0105e9
 
 measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
-templist = [25,-40,85]
+templist = [25, -40, 85]
 vcomlist = ['N\A']
 
 header()
