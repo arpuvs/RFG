@@ -14,12 +14,10 @@ from openpyxl import *
 
 # Instrument initialization
 Supply = AgilentN6705B(26)
-# Source = AgilentN5181A(20)
 Source = AgilentN5181A(11)
 Analyzer = AgilentN9030A(18)
 Oven = WatlowF4(4)
 startTime = time.time()
-# Filter = FMB('COM3', fmbDict)
 
 # Main body of code, called by GUI
 def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
@@ -47,7 +45,6 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
                 freq = float(freq[0]) * 1e6
             elif freq[1] == 'GHz':
                 freq = float(freq[0]) * 1e9
-            # print val
             freqlistReal.append(freq)
 
             # Sets up all equipment for given frequency
@@ -60,7 +57,6 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             Analyzer.__ClearAverage__()
 
             # Sets initial amplitude using measured output of dut
-
             Analyzer.__CheckStatus__(300)                     # Waits until averaging is complete
             time.sleep(0.5)
             Analyzer.__ClearAverage__()
@@ -81,12 +77,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             fundamental.append(carrierMag)
             SourceAmp.append(float(Source.__GetAmp__()))
 
-            # Makes fundamental, second and third harmonic measurements
-            # Analyzer.__Setfc__(freq)
-            # Analyzer.__SetMarkerFreq__(1, freq)
-            # Analyzer.__ClearAverage__()
-            # Analyzer.__CheckStatus__(300)
-            # fundamental.append(float(Analyzer.__GetMarkerAmp__(1)))
+            # Makes second and third harmonic measurements
             Analyzer.__Setfc__(freq*2.0)
             Analyzer.__SetMarkerFreq__(1, freq*2.0)
             Analyzer.__ClearAverage__()
@@ -104,8 +95,8 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             secondNormal.append(-(float(Carrier[j]) - float(second[j])))
             thirdNormal.append(-(float(Carrier[j]) - float(third[j])))
 
+        # Appends measured data at end of specified xlsx file
         Acolumn = sheet_ranges['A']
-
         index = 0
         for row in range(len(Acolumn)+1, len(Acolumn) + len(freqlistReal) + 1):
             data = [dut, channel, temp, freqlistReal[index], supplyV, supplyI[index], vcom, Carrier[index],
@@ -113,112 +104,6 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             for col in range(len(data)):
                 sheet_ranges.cell(column=col+1, row=row, value=data[col])
             index = index + 1
-
-    # P3dB function. May remain unused if measurement is easier with the PNX.
-    # Probably needs to be modified to actually use.
-    def P3dB(freq):
-        Analyzer.__SetSpan__(10e3)
-        Analyzer.__SetBW__(91)
-        Analyzer.__SetAverage__(100)
-        Analyzer.__Setfc__(freq)
-        Analyzer.__SetMarkerFreq__(1, freq)
-        Source.__SetFreq__(freq)
-        sourceAmp = -20
-        Source.__SetAmp__(sourceAmp)
-        Source.__SetState__(1)
-        # time.sleep(3)
-        outAmp = float(Source.__GetAmp__())
-        time.sleep(1)
-        if freq > 4.0e9:
-            time.sleep(4)
-        Analyzer.__ClearAverage__()
-        Analyzer.__CheckStatus__(300)
-        dutAmp = float(Analyzer.__GetMarkerAmp__(1))
-        gain = outAmp - dutAmp
-        print outAmp
-        print dutAmp
-        print 'Initial gain = %g' % gain
-        initGain = gain
-        inc = 5
-        print 'Inc = %d' % inc
-        while abs(gain - initGain) <= 1.0:
-            sourceAmp = sourceAmp + inc
-            # Source.__SetFreq__(freq)
-            # sourceAmp = -20
-            Source.__SetAmp__(sourceAmp)
-            # Source.__SetState__(1)
-            time.sleep(1)
-            amp = float(Source.__GetAmp__())
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            dutAmp = float(Analyzer.__GetMarkerAmp__(1))
-            gain = amp - dutAmp
-            print 'Difference = %g' % abs(gain - initGain)
-            print sourceAmp
-            if sourceAmp >= 12:
-                raise Exception('Amplitude too high, check configuration')
-
-        sourceAmp = sourceAmp - (inc + 1)
-        # print sourceAmp
-        inc = 1
-        gain = initGain
-        print 'Inc = %d' % inc
-        while abs(gain - initGain) <= 1.0:
-            sourceAmp = sourceAmp + inc
-            # Source.__SetFreq__(freq)
-            # sourceAmp = -20
-            Source.__SetAmp__(sourceAmp)
-            # Source.__SetState__(1)
-            time.sleep(1)
-            amp = float(Source.__GetAmp__())
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            dutAmp = float(Analyzer.__GetMarkerAmp__(1))
-            gain = amp - dutAmp
-            print 'Difference = %g' % abs(gain - initGain)
-            print sourceAmp
-            if sourceAmp >= 12:
-                raise Exception('Amplitude too high, check configuration')
-
-        sourceAmp = sourceAmp - (inc + 0.2)
-        inc = 0.2
-        print 'Inc = %g' % inc
-        gain = initGain
-        while abs(gain - initGain) <= 1.0:
-            sourceAmp = sourceAmp + inc
-            # Source.__SetFreq__(freq)
-            # sourceAmp = -20
-            Source.__SetAmp__(sourceAmp)
-            # Source.__SetState__(1)
-            time.sleep(1)
-            amp = float(Source.__GetAmp__())
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            dutAmp = float(Analyzer.__GetMarkerAmp__(1))
-            gain = amp - dutAmp
-            print 'Difference = %g' % abs(gain - initGain)
-            print sourceAmp
-            if sourceAmp >= 12:
-                raise Exception('Amplitude too high, check configuration')
-
-        # fh.write(amp)
-        return amp
-
-    # Prints first line of file
-    def header(dut):
-        test = 'HD23'
-        equipment = 'N6705B N5181A N9030A BAL0026 6'
-        # supplyV = Supply.__MeasP25V__()
-        supplyV = float(Supply.__GetV__(1))
-        print 'Supply V = %g' % supplyV
-        # supplyI = Supply.__MeasP25I__()
-        supplyI = float(Supply.__GetI__(1))
-        print 'Supply I = %g' % supplyI
-        balun = 'INB: 0-VIN OUTB 0-VOP'
-        header = (dut, date, test, equipment, supplyV, supplyI, balun)
-        header = str(header).strip('()')
-        fh.write(header)
-        fh.write('\n')
 
     # Sets oven to setpoint and soaks dut for allotted time
     def setTemp(setpoint):
@@ -228,12 +113,14 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
             time.sleep(1)
             current = float(Oven.__GetTemp__())
         print '@ Temp %d' % setpoint
-        # if temp != 25:
         soak = 300
         time.sleep(soak)
         return True
+
+    # Sets analyzer attenuation settings (22dB was empirically chosen)
     Analyzer.__SetAutoAtten__(0)
     Analyzer.__SetAtten__(22)
+
     # Filter box frequency settings dictionary
     fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
               5: "120 MHz", 6: "225.3 MHz", 7: "350.3 MHz", 8: "500 MHz",
@@ -244,11 +131,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
 
     Filter = FMB('COM3', fmbDict)  # Initializes filter box
 
-    # Creates and opens output file
-    date = time.ctime(time.time())
-    date = date.replace(':', '.')
-    # fh = open('P3dB' + date + '.csv', 'w')
-    # fh = open(path + 'HD23' + date + '.csv', 'w')
+    # Opens specified xlsx file. If no file exists a new spreadsheet is created.
     try:
         wb = load_workbook(filename=path)
     except:
@@ -257,42 +140,32 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
         ws1.title = 'Sheet1'
     sheet_ranges = wb['Sheet1']
 
-
-    # header(dutNumber)  # Prints header line
-
     # Sets up main supply
-    # Vsupply = Ch1, Ven = Ch2, Vcom = Ch3
     supplyV = 5
     Supply.__SetV__(supplyV, 1)
     Supply.__SetI__(0.25, 1)
 
-
-
-    # balunList = ('standard', 'input flipped', 'both flipped', 'output flipped')
-    # balunList = ('S')
+    # Main loop structure
     for temp in templist:
         if templist != [25]:
             setTemp(temp)                       # Sets DUT to temperature
-        # fh.write('Temp = %d' % temp)
-        # fh.write('\n')
         for vcom in vcomlist:
             Supply.__SetV__(vcom, 3)        # Sets DUT to common mode voltage
             print 'Vcom = %g' % vcom
-            # fh.write('Vcom = %g\n' % vcom)
             Source.__SetState__(0)
+
             print 'Aligning...'
             Analyzer.__CheckStatus__(300)
             Analyzer.__Align__()            # Aligns device with no input
             Analyzer.__CheckStatus__(300)
             print 'Done'
+
             HD23()                          # Runs main HD23 measurement
 
-    # Returns oven to ambient temp, finds execution time and closes file
+    # Returns oven to ambient temp, finds execution time and saves file
     if templist != [25]:
         Oven.__SetTemp__(25)
     print time.time()-startTime
-    # fh.write('Execution time (s) = %g' % (time.time() - startTime))
-    # fh.close()
     wb.save(filename=path)
     print 'Done!'
 
@@ -304,14 +177,11 @@ if __name__ == '__main__':
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
     freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     # freqs = [12]
-    # vcoms = []
     # for i in range(20, 31):
     #     vcoms.append(i/10.0)
     # vcoms = [2.0, 2.5, 3.0]
     vcoms = [2.5]
-    # temps = [25, 85, -40]
-    # temps = [25,-40,85]
-    temps = [25,-40,85]
+    temps = [25, -40, 85]
     dut = '3-6'
     channel = 'B'
 
