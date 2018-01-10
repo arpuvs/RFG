@@ -19,8 +19,9 @@ Analyzer = AgilentN9030A(18)
 Oven = WatlowF4(4)
 startTime = time.time()
 
+
 # Main body of code, called by GUI
-def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
+def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEnable):
 
     def HD23():  # Main HD23 measurement function
         # Initializes analyzer
@@ -99,7 +100,7 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
         Acolumn = sheet_ranges['A']
         index = 0
         for row in range(len(Acolumn)+1, len(Acolumn) + len(freqlistReal) + 1):
-            data = [dut, channel, temp, freqlistReal[index], supplyV, supplyI[index], vcom, Carrier[index],
+            data = [dutNumber, channel, temp, freqlistReal[index], supplyV, supplyI[index], vcom, Carrier[index],
                     second[index], third[index], secondNormal[index], thirdNormal[index]]
             for col in range(len(data)):
                 sheet_ranges.cell(column=col+1, row=row, value=data[col])
@@ -141,28 +142,35 @@ def HD23Main(path, freqlist, vcomlist, templist, dutNumber):
     sheet_ranges = wb['Sheet1']
 
     # Sets up main supply
-    supplyV = 5
-    Supply.__SetV__(supplyV, 1)
+    Supply.__SetV__(supplyVlist[0], 1)
     Supply.__SetI__(0.25, 1)
+    Supply.__Enable__(1, 1)
+    if vcomEnable:
+        Supply.__Enable(1, 3)
 
     # Main loop structure
     for temp in templist:
         if templist != [25]:
             setTemp(temp)                       # Sets DUT to temperature
-        for vcom in vcomlist:
-            Supply.__SetV__(vcom, 3)        # Sets DUT to common mode voltage
-            print 'Vcom = %g' % vcom
-            Source.__SetState__(0)
+        for supplyV in supplyVlist:
+            Supply.__SetV__(supplyV, 1)
+            for vcom in vcomlist:
+                Supply.__SetV__(vcom, 3)        # Sets DUT to common mode voltage
+                print 'Vcom = %g' % vcom
+                Source.__SetState__(0)
 
-            print 'Aligning...'
-            Analyzer.__CheckStatus__(300)
-            Analyzer.__Align__()            # Aligns device with no input
-            Analyzer.__CheckStatus__(300)
-            print 'Done'
+                print 'Aligning...'
+                Analyzer.__CheckStatus__(300)
+                Analyzer.__Align__()            # Aligns device with no input
+                Analyzer.__CheckStatus__(300)
+                print 'Done'
 
-            HD23()                          # Runs main HD23 measurement
+                HD23()                          # Runs main HD23 measurement
 
     # Returns oven to ambient temp, finds execution time and saves file
+    Supply.__Enable__(0, 1)
+    if vcomEnable:
+        Supply.__Enable(0, 3)
     if templist != [25]:
         Oven.__SetTemp__(25)
     print time.time()-startTime
@@ -180,9 +188,11 @@ if __name__ == '__main__':
     # for i in range(20, 31):
     #     vcoms.append(i/10.0)
     # vcoms = [2.0, 2.5, 3.0]
+    supplies = [5]
     vcoms = [2.5]
     temps = [25, -40, 85]
+    vcomEnable = 0
     dut = '3-6'
     channel = 'B'
 
-    HD23Main(path, freqs, vcoms, temps, dut)  # Calls main program
+    HD23Main(path, supplies, freqs, vcoms, temps, dut, vcomEnable)  # Calls main program
