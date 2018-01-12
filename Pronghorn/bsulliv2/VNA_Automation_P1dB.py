@@ -26,7 +26,7 @@ def VNAinit():
     VNA.__SetSweepType__(1, 'LOG')
     VNA.__SetAutoTime__(1, True)
     VNA.__RecallCal__('BS_IMD_Cal')
-    VNA.__GainCompMaxLevel__(2, 10)
+    VNA.__GainCompMaxLevel__(1, 10)
 
 # Sets oven to specified temperature and soaks
 def setTemp(setpoint):
@@ -82,7 +82,7 @@ def header():
 
 startTime = time.time()
 
-path = 'C:\\Users\\#RFW_Test01\\Desktop\\Pronghorn_Results\\VNA_Results\\P1dB\\'
+path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\P1dB\\'
 
 date = time.ctime(time.time())
 date = date.replace(':', '-')
@@ -98,11 +98,9 @@ numPoints = 1000.0
 startFreq = 10.5e6
 endFreq = 10.0105e9
 
-# Measurements to be taken. See online VNA guide for more options
-measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
-
 # Swept parameters
-templist = [25, -40, 80]
+# templist = [25, -40, 80]
+templist = [25]
 vcomlist = ['N\A']
 
 header()
