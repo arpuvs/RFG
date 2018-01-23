@@ -12,6 +12,7 @@ from ADI_GPIB.KeysightN5242A import *
 VNA = KeysightN5424A(17)
 Oven = WatlowF4(4)
 Supply = E3631A(23)
+vcomSupply = E3631A(15)
 
 # Sets all necessary VNA parameters and adds all specified measurements
 def VNAinit():
@@ -34,6 +35,7 @@ def VNAinit():
     VNA.__IMDPower__(1, -8)
     VNA.__RecallCal__('BS_IMD_Cal')
     VNA.__SetAttenuation__(10)
+    VNA.__SetSourceAttenuation__(1, 2, 0)
     VNA.__EnableAvg__(1, True)
     VNA.__SetAvg__(1, avg)
 
@@ -83,7 +85,7 @@ def getData():
 
 # Prints first line of file
 def header():
-    dut = '3-7 ChB'
+    dut = '3-4 ChA'
     test = 'PNA-X IMD'
     equipment = 'BAL0026 6dB in and out '
     header = (dut, date, test, equipment)
@@ -94,7 +96,7 @@ def header():
 
 startTime = time.time()
 
-path = 'C:\\Users\\#RFW_Test01\\Desktop\\Pronghorn_Results\\VNA_Results\\IMD\\'
+path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\IMD'
 
 date = time.ctime(time.time())
 date = date.replace(':', '-')
@@ -115,7 +117,8 @@ measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', '
 
 # Swept parameters
 templist = [25, -40, 85]
-vcomlist = ['N\A']
+vcomlist = [2.0, 2.5, 3.0]
+supplylist = [4.5, 5.0, 5.5]
 
 header()
 Supply.__SetEnable__(1)
@@ -127,9 +130,14 @@ for temp in templist:
         setTemp(temp)
     fh.write('Temp = %d' % temp)
     fh.write('\n')
-    for vcom in vcomlist:
-        fh.write('Vcom = %s\n' % vcom)
-        getData()
+    for supply in supplylist:
+        Supply.__SetP25V__(supply)
+        fh.write('Supply = %g\n' % supply)
+        for vcom in vcomlist:
+            vcomSupply.__SetP25V__(vcom)
+            fh.write('Vcom = %g\n' % vcom)
+            time.sleep(0.2)
+            getData()
 
 # Final actions: return to temperature, get execution time and close file
 if templist != [25]:

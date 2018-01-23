@@ -144,6 +144,9 @@ class KeysightN5424A(GPIBObjectBaseClass):
         self.instr.write('SENS:POW:ATT AREC,%d' % level)
         self.instr.write('SENS:POW:ATT BREC,%d' % level)
 
+    def __SetSourceAttenuation__(self, source, port, level):
+        self.instr.write('SOUR%d:POW%d:ATT %d' % (source, port, level))
+
     def __RecallCal__(self, filename):
         self.instr.write('SENS:CORR:CSET:ACT \"%s\", 1' % filename)
 
