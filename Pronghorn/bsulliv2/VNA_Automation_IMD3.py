@@ -25,7 +25,6 @@ def VNAinit():
         VNA.__AddMeas__(1, meas, 'Swept IMD', meas)
         VNA.__AddTrace__(1, trace, meas)
         trace = trace + 1
-
     VNA.__SetStopf__(1, 10.0105e9)
     VNA.__SetNumPoints__(1, 1e3)
     VNA.__SetAvg__(1, avg)
@@ -33,9 +32,10 @@ def VNAinit():
     VNA.__EnableAvg__(1, True)
     VNA.__IMDPowType__(1, 'OUTPUT')
     VNA.__IMDPower__(1, -8)
-    VNA.__RecallCal__('BS_IMD_Cal')
+    VNA.__RecallCal__('BS_IMD_Cal_%s' % delta)
     VNA.__SetAttenuation__(10)
     VNA.__SetSourceAttenuation__(1, 2, 0)
+    VNA.__SetIMDDelta__(1, float(delta))
     VNA.__EnableAvg__(1, True)
     VNA.__SetAvg__(1, avg)
 
@@ -96,7 +96,7 @@ def header():
 
 startTime = time.time()
 
-path = 'C:\\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\IMD'
+path = 'C:\Users\\bsulliv2\\Desktop\\Pronghorn_Results\\VNA_Results\\IMD\\'
 
 date = time.ctime(time.time())
 date = date.replace(':', '-')
@@ -111,12 +111,14 @@ avg = 5
 numPoints = 1000.0
 startFreq = 10.5e6
 endFreq = 10.0105e9
+delta = '2e6'
 
 # Measurements to be taken. See online VNA guide for more options
 measlist = ['PwrMainHi', 'PwrMainLo', 'IM3HI', 'IM3LO', 'PwrMainIN', 'OIP3LO', 'OIP3HI']
 
 # Swept parameters
 templist = [25, -40, 85]
+templist = [25]
 vcomlist = [2.0, 2.5, 3.0]
 supplylist = [4.5, 5.0, 5.5]
 

@@ -134,6 +134,9 @@ class KeysightN5424A(GPIBObjectBaseClass):
         # Could use input or output
         self.instr.write('SENS%d:IMD:TPOW:LEV %s' % (window, type))
 
+    def __SetIMDDelta__(self, window, delta):
+        self.instr.write('SENS%d:IMD:FREQ:DFR %g' % (window, delta))
+
     def __Preset__(self, type = 'partial'):
         if type.lower() == 'full':
             self.instr.write('SYST:FPR')
