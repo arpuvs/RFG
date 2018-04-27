@@ -168,7 +168,8 @@ path = 'C:\\Users\\#RFW_Test01\\Desktop\\Pronghorn_Results\\VNA_Results\\'
 
 date = time.ctime(time.time())
 date = date.replace(':', '-')
-fh = open(path + 'SParam_' + date + '.csv', 'w')    # Creates csv file
+dut = '3-5 CHB'
+fh = open(path + dut + ' SParam_' + date + '.csv', 'w')    # Creates csv file
 
 # Impedance parameters
 Zin_diff = 100
