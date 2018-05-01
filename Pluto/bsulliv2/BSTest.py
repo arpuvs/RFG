@@ -1,9 +1,13 @@
 import sys
 import time
 from PlutoV1 import PlutoV1
-# sys.path.append('E:/bsulliv2/hcg_wireline/common')
-# from ADI_GPIB.E3633A import *
-# from ADI_GPIB.TekDSA72504D import *
+sys.path.append('../../Common/ADI_GPIB')
+from HP661XC import HP661XC
+from ADI_GPIB.E3633A import *
+from ADI_GPIB.TekDSA72504D import *
+from ADI_GPIB.AgilentE8257D import *
+from AgilentN9030A import *
+from KeysightN5242A import *
 # from SMAUSB import *
 
 def Main():
@@ -25,12 +29,15 @@ def InstInit():
     # instDict['Supply2'] = Keithley2230('0x05E6::0x2230::9200245')
     # instDict['Supply1'] = Keithley2230('0x05E6::0x2230::9200268')
     # instDict['Supply3'] = Keithley2230('0x05E6::0x2230::9200526')
-    instDict['Supply3p3'] = E3633A(8)
-    instDict['clkSource'] = SMAUSB('USB0::0x0AAD::0x0048::104063::INSTR')
+    instDict['Supply'] = HP661XC(9)
+    instDict['Vcom'] = HP661XC(5)
+    instDict['Source'] = AgilentE8257D(12)
+    instDict['SA'] = AgilentN9030A(18)
+    instDict['NA'] = KeysightN5424A(16)
     # instDict['thermo'] = Thermo4300(29, 1, 140, -60)
-    instDict['scope'] = TekDSA72504D(15)
+    # instDict['scope'] = TekDSA72504D(15)
     return instDict
 
 if __name__ == '__main__':
-    # InstInit()
-    Main()
+    InstInit()
+    # Main()

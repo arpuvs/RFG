@@ -168,6 +168,12 @@ class KeysightN5424A(GPIBObjectBaseClass):
                 if time.time() > endtime:
                     raise Exception('Maximum wait time exceeded')
 
+    def __Output__(self, state):
+        if state:
+            self.instr.write('OUTP ON')
+        else:
+            self.instr.write('OUTP OFF')
+
 
     def __GetData__(self, channel):  # Can't find on PXA**
         return self.instr.ask("CALC%d:DATA? FDATA" % channel)
