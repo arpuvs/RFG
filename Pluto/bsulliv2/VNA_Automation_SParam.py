@@ -245,7 +245,10 @@ def SParam():
             fh.write('Supply = %g\n' % supply)
             instDict['Supply'].__SetV__(supply)
             for vcom in vcomlist:
-                fh.write('Vcom = %s\n' % vcom)
+                if vcom != 'N/A':
+                    vcominstDict['Supply'].__SetV__(vcom)
+                    fh.write('Vcom = %g\n' % vcom)
+                    time.sleep(0.2)
                 for atten in attenlist:
                     fh.write('Atten = %g\n' % atten)
                     pluto.Set_Amp_Atten(SPI_sel=channel, AmpAtten=atten)
@@ -266,8 +269,9 @@ def SParam():
     wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\Junk\\'
+    path = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\Raw\\Sparam\\'
     summaryPath = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\PlutoSparamSummary.xlsx'
+
     Zin_diff = 100
     Zout_diff = 100
     avg = 16
