@@ -35,11 +35,11 @@ def IMD():
         instDict['NA'].__SetAvg__(1, avg)
         instDict['NA'].__SetAutoTime__(1, True)
         instDict['NA'].__EnableAvg__(1, True)
-        instDict['NA'].__IMDPowType__(1, 'OUTPUT')
+        # instDict['NA'].__IMDPowType__(1, 'OUTPUT')
         instDict['NA'].__IMDPower__(1, Pout)
         instDict['NA'].__SetAttenuation__(10)
         instDict['NA'].__SetSourceAttenuation__(1, 2, 0)
-        # instDict['NA'].__RecallCal__('Pluto_IMD')
+        instDict['NA'].__RecallCal__('Pluto_IMD')
         instDict['NA'].__SetIMDDelta__(1, float(delta))
         instDict['NA'].__EnableAvg__(1, True)
         instDict['NA'].__SetAvg__(1, avg)
@@ -61,7 +61,7 @@ def IMD():
         instDict['NA'].__EnableAvg__(1, False)
         instDict['NA'].__EnableAvg__(1, True)
 
-        time.sleep(60)  # Necessary to let one sweep finish. Otherwise FinishAvg function does not work
+        time.sleep(20)  # Necessary to let one sweep finish. Otherwise FinishAvg function does not work
         print 'Done Sleeping'
         instDict['NA'].__FinishAvg__(1, 600)   # Pauses execution until VNA is finished averaging
 
@@ -77,7 +77,6 @@ def IMD():
 
         # Retrieves swept frequency points
         freqlist = instDict['NA'].__GetFreq__(1)
-
         # Writes all data to file
         fh.write('Frequency,')
         fh.write(str(freqlist).strip('[]'))
@@ -99,16 +98,16 @@ def IMD():
         fh.write(header)
         fh.write('\n')
 
-    def summary(freqlist, readDict1, readDict2):
+    def summary(freqlist, readDict2, readDict3):
         # columns = [dut, temp, supply, vcom, atten, freqlist, scc21]
 
         Acolumn = sheet_ranges['A']
         index = 0
-        for row in range(len(Acolumn) + 1, len(Acolumn) + 50):
+        for row in range(len(Acolumn) + 1, len(Acolumn) + 49):
             data = [dut, temp, supply, vcom, atten, freqlist[index], readDict2['PwrMainHi'][index],
-                    readDict2['PwrMainLo'][index], readDict2['IM2Hi'][index], readDict2['IM2LO'][index],
-                    readDict2['PwrMainIN'][index], readDict2['OIP2LO'][index], readDict2['OIP2Hi'][index],
-                    readDict3['PwrMainHi'][index], readDict3['PwrMainHi'][index], readDict3['IM3Hi'][index],
+                    readDict2['PwrMainLo'][index], readDict2['IM2HI'][index], readDict2['IM2LO'][index],
+                    readDict2['PwrMainIN'][index], readDict2['OIP2LO'][index], readDict2['OIP2HI'][index],
+                    readDict3['PwrMainHi'][index], readDict3['PwrMainHi'][index], readDict3['IM3HI'][index],
                     readDict3['IM3LO'][index], readDict3['PwrMainIN'][index], readDict3['OIP3LO'][index],
                     readDict3['OIP3HI'][index]]
             for col in range(len(data)):
@@ -117,9 +116,9 @@ def IMD():
 
         index = len(freqlist) - 1
         data = [dut, temp, supply, vcom, atten, freqlist[index], readDict2['PwrMainHi'][index],
-                readDict2['PwrMainLo'][index], readDict2['IM2Hi'][index], readDict2['IM2LO'][index],
-                readDict2['PwrMainIN'][index], readDict2['OIP2LO'][index], readDict2['OIP2Hi'][index],
-                readDict3['PwrMainHi'][index], readDict3['PwrMainHi'][index], readDict3['IM3Hi'][index],
+                readDict2['PwrMainLo'][index], readDict2['IM2HI'][index], readDict2['IM2LO'][index],
+                readDict2['PwrMainIN'][index], readDict2['OIP2LO'][index], readDict2['OIP2HI'][index],
+                readDict3['PwrMainHi'][index], readDict3['PwrMainHi'][index], readDict3['IM3HI'][index],
                 readDict3['IM3LO'][index], readDict3['PwrMainIN'][index], readDict3['OIP3LO'][index],
                 readDict3['OIP3HI'][index]]
         for col in range(len(data)):
@@ -183,7 +182,13 @@ def IMD():
                     VNAinit()
                     readDict3 = getData()
                     freqlist = instDict['NA'].__GetFreq__(1)
-                    summary(freqlist, readDict2, readDict3)
+                    freqlist = freqlist.strip('[]')
+                    freqlist = freqlist.split(',')
+                    newfreqlist = []
+                    for item in freqlist:
+                        item = float(item)
+                        newfreqlist.append(item)
+                    summary(newfreqlist, readDict2, readDict3)
 
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
@@ -197,6 +202,7 @@ def IMD():
     fh.write('Execution Time = ,%d' % endTime)
 
     fh.close()
+    wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
     path = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\Raw\\IMD\\'
@@ -204,20 +210,21 @@ if __name__ == '__main__':
 
     avg = 5
 
-    numPoints = 1000.0
+    numPoints = 201
     startFreq = 10.5e6
     endFreq = 10.0105e9
-    Pout = -20
+    Pout = 7
 
     im2delta = '10e6'
     im3delta = '2e6'
 
     templist = [25]
     vcomlist = ['N/A']
-    supplylist = [5.0]
+    supplylist = [3.3]
     attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    dut = 'V1B3 B'
-    channel = 'B'
+    # attenlist = []
+    dut = 'V1B1 A'
+    channel = 'A'
 
     instDict = InstInit()
 

@@ -100,7 +100,7 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
         Acolumn = sheet_ranges['A']
         index = 0
         for row in range(len(Acolumn)+1, len(Acolumn) + len(freqlistReal) + 1):
-            data = [dutNumber, channel, temp, freqlistReal[index], supplyV, supplyI[index], vcom, Carrier[index],
+            data = [dutNumber, channel, temp, supplyV, vcom, atten, freqlistReal[index], supplyI[index], Carrier[index],
                     second[index], third[index], secondNormal[index], thirdNormal[index]]
             for col in range(len(data)):
                 sheet_ranges.cell(column=col+1, row=row, value=data[col])
@@ -134,12 +134,20 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
 
     # Opens specified xlsx file. If no file exists a new spreadsheet is created.
     try:
-        wb = load_workbook(filename=path)
+        wb = load_workbook(filename=summaryPath)
+        sheet_ranges = wb['Sheet1']
     except:
         wb = Workbook()
         ws1 = wb.active
         ws1.title = 'Sheet1'
-    sheet_ranges = wb['Sheet1']
+        sheet_ranges = wb['Sheet1']
+        firstline = ['DUT', 'Channel', 'Temp', 'Supply', 'Vcom', 'Attenuation', 'Frequency', 'Current', 'Carrier(dB)',
+                     'Second(dB)', 'Third(dB)', 'HD2(dBc)', 'HD3(dBc)']
+        col = 1
+        for item in firstline:
+            sheet_ranges.cell(column=col, row=1, value=firstline[col-1])
+            col = col + 1
+
 
     # Sets up main supply
     Supply.__SetV__(supplyVlist[0], 1)
@@ -155,17 +163,20 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
         for supplyV in supplyVlist:
             Supply.__SetV__(supplyV, 1)
             for vcom in vcomlist:
-                Supply.__SetV__(vcom, 3)        # Sets DUT to common mode voltage
+                Supply.__SetV__(vcom, 3)  # Sets DUT to common mode voltage
                 print 'Vcom = %g' % vcom
-                Source.__SetState__(0)
+                for atten in attenlist:
+                    pluto.Set_Amp_Atten(SPI_sel=channel, AmpAtten=atten)
+                    print 'Atten = %g' % atten
 
-                print 'Aligning...'
-                Analyzer.__CheckStatus__(300)
-                Analyzer.__Align__()            # Aligns device with no input
-                Analyzer.__CheckStatus__(300)
-                print 'Done'
+                    Source.__SetState__(0)
+                    print 'Aligning...'
+                    Analyzer.__CheckStatus__(300)
+                    Analyzer.__Align__()            # Aligns device with no input
+                    Analyzer.__CheckStatus__(300)
+                    print 'Done'
 
-                HD23()                          # Runs main HD23 measurement
+                    HD23()                          # Runs main HD23 measurement
 
     # Returns oven to ambient temp, finds execution time and saves file
     Supply.__Enable__(0, 1)
@@ -192,6 +203,7 @@ if __name__ == '__main__':
     vcoms = [2.5]
     temps = [25]
     vcomEnable = 0
+    attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     dut = '3-6'
     channel = 'B'
 
