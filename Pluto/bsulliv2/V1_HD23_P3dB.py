@@ -9,15 +9,10 @@ from ADI_GPIB.AgilentN5181A import *
 from ADI_GPIB.AgilentN9030A import *
 from ADI_GPIB.AgilentN6705B import *
 from ADI_GPIB.WatlowF4 import *
-from FMB import *
+# from FMB import *
 from openpyxl import *
-
-# Instrument initialization
-Supply = AgilentN6705B(26)
-Source = AgilentN5181A(11)
-Analyzer = AgilentN9030A(18)
-Oven = WatlowF4(4)
-startTime = time.time()
+from BSTest import *
+from PlutoV1 import PlutoV1
 
 
 # Main body of code, called by GUI
@@ -25,8 +20,11 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
 
     def HD23():  # Main HD23 measurement function
         # Initializes analyzer
-        Analyzer.__SetSpan__(10e3)
-        Analyzer.__SetAverage__(50)
+        instDict['SA'].__SetSpan__(span)
+        instDict['SA'].__EnableAverage__(1)
+        instDict['SA'].__SetAverage__(avg)
+        instDict['SA'].__SetAutoBW__(0)
+        instDict['SA'].__SetBW__(BW)
 
         # Initializes all measurement arrays
         fundamental = []
@@ -49,47 +47,65 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
             freqlistReal.append(freq)
 
             # Sets up all equipment for given frequency
-            Filter.select_filter(freqindex)
-            Source.__SetFreq__(freq)
-            Analyzer.__Setfc__(freq)
-            Source.__SetState__(1)
-            Analyzer.__SetMarkerFreq__(1, freq)
+            # Filter.select_filter(freqindex)
+            instDict['Source'].__SetFrequency__(freq/1e6)
+            instDict['SA'].__Setfc__(freq)
+            instDict['Source'].__SetOut_ON__()
+            instDict['SA'].__SetMarkerFreq__(1, freq)
             time.sleep(0.1)
-            Analyzer.__ClearAverage__()
+            instDict['SA'].__ClearAverage__()
 
             # Sets initial amplitude using measured output of dut
-            Analyzer.__CheckStatus__(300)                     # Waits until averaging is complete
+            instDict['SA'].__CheckStatus__(300)                     # Waits until averaging is complete
             time.sleep(0.5)
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            carrierMag = float(Analyzer.__GetMarkerAmp__(1))  # Gets initial amplitude
-            while abs(carrierMag - -2) >= 0.1:                # Adjusts amplitude until it is within 0.1 dBm of desired
-                sourceAmp = float(Source.__GetAmp__())
-                setAmp = sourceAmp + (-2 - carrierMag)
-                if setAmp > 15:
+            instDict['SA'].__ClearAverage__()
+            instDict['SA'].__CheckStatus__(300)
+
+            adjustedfreqlist = []
+            if pksearchEnable:
+                print freq
+                instDict['SA'].__PeakSearch__(1)
+                time.sleep(0.1)
+                freq = float(instDict['SA'].__GetMarkerFreq__(1))
+                print freq
+                adjustedfreqlist.append(freq)
+            else:
+                adjustedfreqlist = freqlistReal
+
+            carrierMag = float(instDict['SA'].__GetMarkerAmp__(1))  # Gets initial amplitude
+            while abs(carrierMag - Pout) >= 0.1:                # Adjusts amplitude until it is within 0.1 dBm of desired
+                sourceAmp = float(instDict['Source'].__GetLevel__())
+                setAmp = sourceAmp + (Pout - carrierMag)
+                if setAmp > maxPow:
                     raise Exception('Max source amplitude exceeded')
-                Source.__SetAmp__(setAmp)
-                Analyzer.__ClearAverage__()
-                Analyzer.__CheckStatus__(300)
-                carrierMag = float(Analyzer.__GetMarkerAmp__(1))
+                instDict['Source'].__SetLevel__(setAmp)
+                instDict['SA'].__ClearAverage__()
+                instDict['SA'].__CheckStatus__(300)
+                carrierMag = float(instDict['SA'].__GetMarkerAmp__(1))
 
             # Gets final amplitude
             Carrier.append(carrierMag)
             fundamental.append(carrierMag)
-            SourceAmp.append(float(Source.__GetAmp__()))
+            SourceAmp.append(float(instDict['Source'].__GetLevel__()))
 
             # Makes second and third harmonic measurements
-            Analyzer.__Setfc__(freq*2.0)
-            Analyzer.__SetMarkerFreq__(1, freq*2.0)
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            second.append(float(Analyzer.__GetMarkerAmp__(1)))
-            Analyzer.__Setfc__(freq*3.0)
-            Analyzer.__SetMarkerFreq__(1, freq*3.0)
-            Analyzer.__ClearAverage__()
-            Analyzer.__CheckStatus__(300)
-            third.append(float(Analyzer.__GetMarkerAmp__(1)))
-            supplyI.append(float(Supply.__GetI__(1)))
+            instDict['SA'].__Setfc__(freq*2.0)
+            instDict['SA'].__SetMarkerFreq__(1, freq*2.0)
+            instDict['SA'].__ClearAverage__()
+            instDict['SA'].__CheckStatus__(300)
+            if pksearchEnable:
+                instDict['SA'].__PeakSearch__(1)
+                time.sleep(0.1)
+            second.append(float(instDict['SA'].__GetMarkerAmp__(1)))
+            instDict['SA'].__Setfc__(freq*3.0)
+            instDict['SA'].__SetMarkerFreq__(1, freq*3.0)
+            instDict['SA'].__ClearAverage__()
+            instDict['SA'].__CheckStatus__(300)
+            if pksearchEnable:
+                instDict['SA'].__PeakSearch__(1)
+                time.sleep(0.1)
+            third.append(float(instDict['SA'].__GetMarkerAmp__(1)))
+            supplyI.append(float(instDict['Supply'].__GetI__()))
 
         # Converts dBm measurements to dBc
         for j in range(len(second)):
@@ -99,8 +115,8 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
         # Appends measured data at end of specified xlsx file
         Acolumn = sheet_ranges['A']
         index = 0
-        for row in range(len(Acolumn)+1, len(Acolumn) + len(freqlistReal) + 1):
-            data = [dutNumber, channel, temp, supplyV, vcom, atten, freqlistReal[index], supplyI[index], Carrier[index],
+        for row in range(len(Acolumn)+1, len(Acolumn) + len(adjustedfreqlist) + 1):
+            data = [dutNumber, channel, temp, supplyV, vcom, atten, adjustedfreqlist[index], supplyI[index], Carrier[index],
                     second[index], third[index], secondNormal[index], thirdNormal[index]]
             for col in range(len(data)):
                 sheet_ranges.cell(column=col+1, row=row, value=data[col])
@@ -119,8 +135,9 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
         return True
 
     # Sets analyzer attenuation settings (22dB was empirically chosen)
-    Analyzer.__SetAutoAtten__(0)
-    Analyzer.__SetAtten__(22)
+    startTime = time.time()
+    instDict['SA'].__SetAutoAtten__(0)
+    instDict['SA'].__SetAtten__(22)
 
     # Filter box frequency settings dictionary
     fmbDict = {1: "2.5 MHz", 2: "5 MHz", 3: "33 MHz", 4: "78 MHz",
@@ -130,11 +147,11 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
               17: "4.5 GHz", 18: "5 GHz", 19: "5.5 GHz", 20: "5.9 GHz",
               21: "Aux"}
 
-    Filter = FMB('COM3', fmbDict)  # Initializes filter box
+    # Filter = FMB('COM3', fmbDict)  # Initializes filter box
 
     # Opens specified xlsx file. If no file exists a new spreadsheet is created.
     try:
-        wb = load_workbook(filename=summaryPath)
+        wb = load_workbook(filename=path)
         sheet_ranges = wb['Sheet1']
     except:
         wb = Workbook()
@@ -150,38 +167,39 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
 
 
     # Sets up main supply
-    Supply.__SetV__(supplyVlist[0], 1)
-    Supply.__SetI__(0.25, 1)
-    Supply.__Enable__(1, 1)
+    instDict['Supply'].__SetV__(supplies[0])
+    instDict['Supply'].__SetI__(0.25)
+    instDict['Supply'].__SetEnable__(1)
     if vcomEnable:
-        Supply.__Enable(1, 3)
+        instDict['Vcom'].__SetEnable__(1)
 
     # Main loop structure
     for temp in templist:
         if templist != [25]:
             setTemp(temp)                       # Sets DUT to temperature
-        for supplyV in supplyVlist:
-            Supply.__SetV__(supplyV, 1)
+        for supplyV in supplies:
+            instDict['Supply'].__SetV__(supplyV)
             for vcom in vcomlist:
-                Supply.__SetV__(vcom, 3)  # Sets DUT to common mode voltage
+                instDict['Vcom'].__SetV__(vcom)  # Sets DUT to common mode voltage
                 print 'Vcom = %g' % vcom
                 for atten in attenlist:
                     pluto.Set_Amp_Atten(SPI_sel=channel, AmpAtten=atten)
                     print 'Atten = %g' % atten
 
-                    Source.__SetState__(0)
+                    instDict['Source'].__SetOut_OFF__()
                     print 'Aligning...'
-                    Analyzer.__CheckStatus__(300)
-                    Analyzer.__Align__()            # Aligns device with no input
-                    Analyzer.__CheckStatus__(300)
+                    # instDict['SA'].__CheckStatus__(300)
+                    # instDict['SA'].__Align__()            # Aligns device with no input
+                    # instDict['SA'].__CheckStatus__(300)
                     print 'Done'
 
                     HD23()                          # Runs main HD23 measurement
 
     # Returns oven to ambient temp, finds execution time and saves file
-    Supply.__Enable__(0, 1)
+    instDict['Source'].__SetOut_OFF__()
+    instDict['Supply'].__SetEnable__(0)
     if vcomEnable:
-        Supply.__Enable(0, 3)
+        instDict['Vcom'].__SetEnable(0)
     if templist != [25]:
         Oven.__SetTemp__(25)
     print time.time()-startTime
@@ -192,18 +210,26 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
 # Called if program run by itself
 if __name__ == '__main__':
     # Sets all necessary variables
-    path = 'C:\\Users\\#RFW_Test01\\Desktop\\5569_Data\\Hd23\\HD23.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\HD23.xlsx'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
-    freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-    # freqs = [12]
+    # freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    freqs = [12]
     # for i in range(20, 31):
     #     vcoms.append(i/10.0)
     # vcoms = [2.0, 2.5, 3.0]
-    supplies = [5]
+    supplies = [3.3]
     vcoms = [2.5]
     temps = [25]
     vcomEnable = 0
-    attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    pksearchEnable = 1
+    # attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    attenlist = [0]
+    Pout = -8
+    maxPow = 0
+    span = 1e3
+    avg = 10
+    BW = 10
+
     dut = '3-6'
     channel = 'B'
 

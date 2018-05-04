@@ -36,10 +36,11 @@ def IMD():
         instDict['NA'].__SetAutoTime__(1, True)
         instDict['NA'].__EnableAvg__(1, True)
         # instDict['NA'].__IMDPowType__(1, 'OUTPUT')
-        instDict['NA'].__IMDPower__(1, Pout)
+        # instDict['NA'].__IMDPower__(1, Pout)
         instDict['NA'].__SetAttenuation__(10)
         instDict['NA'].__SetSourceAttenuation__(1, 2, 0)
-        instDict['NA'].__RecallCal__('Pluto_IMD')
+        instDict['NA'].__RecallCal__('Pluto_IMD2')
+        instDict['NA'].__IMDPower__(1, Pout)
         instDict['NA'].__SetIMDDelta__(1, float(delta))
         instDict['NA'].__EnableAvg__(1, True)
         instDict['NA'].__SetAvg__(1, avg)
@@ -141,8 +142,8 @@ def IMD():
         ws1.title = 'Sheet1'
         sheet_ranges = wb['Sheet1']
         firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'Attenuation', 'Frequency', 'PwrMain2Hi', 'PwrMain2Lo', 'IM2HI',
-                     'IM2LO', 'PwrMainIn2', 'OIP2LO', 'OIP2HI', 'DUT', 'Temp', 'Supply', 'Vcom', 'Attenuation',
-                     'Frequency', 'PwrMain3Hi', 'PwrMain3Lo', 'IM3HI', 'IM3LO', 'PwrMainIn3', 'OIP3LO', 'OIP3HI']
+                     'IM2LO', 'PwrMainIn2', 'OIP2LO', 'OIP2HI', 'PwrMain3Hi', 'PwrMain3Lo', 'IM3HI', 'IM3LO',
+                     'PwrMainIn3', 'OIP3LO', 'OIP3HI']
         col = 1
         for item in firstline:
             sheet_ranges.cell(column=col, row=1, value=firstline[col-1])
@@ -205,15 +206,15 @@ def IMD():
     wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\Raw\\IMD\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\PlutoIMDSummary.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\IMD\\'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\PlutoIMDSummary-8dBm.xlsx'
 
     avg = 5
 
     numPoints = 201
     startFreq = 10.5e6
     endFreq = 10.0105e9
-    Pout = 7
+    Pout = -8
 
     im2delta = '10e6'
     im3delta = '2e6'
@@ -223,7 +224,7 @@ if __name__ == '__main__':
     supplylist = [3.3]
     attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     # attenlist = []
-    dut = 'V1B1 A'
+    dut = 'V1B2 A'
     channel = 'A'
 
     instDict = InstInit()

@@ -25,6 +25,9 @@ class AgilentN9030A(GPIBObjectBaseClass):
     def __SetMarkerFreq__(self, marker, freq):
         self.instr.write(':CALC:MARK%d:X:CENT %g' % (marker, freq))
 
+    def __PeakSearch__(self, marker):
+        self.instr.write(':CALC:MARK%d:MAX' % marker)
+
     def __GetMarkerAmp__(self, marker):
         i = 0
         amp = self.instr.ask(':CALC:MARK%d:Y?' % marker)
@@ -51,6 +54,9 @@ class AgilentN9030A(GPIBObjectBaseClass):
     def __SetAverage__(self, average):
         self.instr.write(':AVER:COUN %d' % average)
 
+    def __EnableAverage__(self, trace):
+        self.instr.write(':TRAC%d:TYPE AVER' % trace)
+
     def __ClearAverage__(self):
         self.instr.write(':AVER:CLE')
 
@@ -68,6 +74,9 @@ class AgilentN9030A(GPIBObjectBaseClass):
 
     def __GetAtten__(self):
         return self.instr.ask(':POW:ATT?')
+
+    def __SetAutoBW__(self, state):
+        self.instr.write('BAND:SEl:AUTO %d' % state)
 
     def __CheckStatus__(self, maxWait):
         endtime = time.time() + maxWait

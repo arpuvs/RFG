@@ -228,10 +228,10 @@ def SParam():
     measlist = ['SCC21 MLOG', 'SDC21 MLOG', 'SDD11 POL', 'SDD12 MLOG', 'SDD21 GDEL',
                 'SDD21 MLOG', 'SDD21 POL', 'SDD11 MLOG', 'SDD22 MLOG']
 
-    # Summary setup
+    Summary setup
 
 
-    header()
+    # header()
     instDict['Supply'].__SetEnable__(1)
     VNAinit()
 
