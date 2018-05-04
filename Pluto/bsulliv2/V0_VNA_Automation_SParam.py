@@ -10,7 +10,7 @@ sys.path.append('../../Common')
 # from ADI_GPIB.KeysightN5242A import *
 from openpyxl import *
 from BSTest import *
-from PlutoV1 import PlutoV1
+from PlutoV0 import PlutoV0
 
 # Sets all necessary VNA parameters and adds all specified measurements
 def SParam():
@@ -168,12 +168,11 @@ def SParam():
         fh.write('\n')
 
     def summary(freqlist, readDict):
-        # columns = [dut, temp, supply, vcom, atten, freqlist, scc21]
 
         Acolumn = sheet_ranges['A']
         index = 0
         for row in range(len(Acolumn)+1, len(Acolumn) + 50):
-            data = [dut, temp, supply, vcom, atten, freqlist[index], readDict['SCC21 MLOG'][index],
+            data = [dut, temp, supply, vcom, Pout, pwrmode, gain, freqlist[index], readDict['SCC21 MLOG'][index],
                     readDict['SDC21 MLOG'][index], readDict['SDD11 POL1'][index], readDict['SDD11 POL2'][index],
                     readDict['SDD12 MLOG'][index], readDict['SDD21 GDEL'][index], readDict['SDD21 MLOG'][index],
                     readDict['SDD21 POL1'][index], readDict['SDD21 POL2'][index], readDict['SDD11 MLOG'][index],
@@ -184,7 +183,7 @@ def SParam():
             index = index + int(numPoints/50)
 
         index = len(freqlist)-1
-        data = [dut, temp, supply, vcom, atten, freqlist[index], readDict['SCC21 MLOG'][index],
+        data = [dut, temp, supply, vcom, Pout, pwrmode, gain, freqlist[index], readDict['SCC21 MLOG'][index],
                 readDict['SDC21 MLOG'][index], readDict['SDD11 POL1'][index], readDict['SDD11 POL2'][index],
                 readDict['SDD12 MLOG'][index], readDict['SDD21 GDEL'][index], readDict['SDD21 MLOG'][index],
                 readDict['SDD21 POL1'][index], readDict['SDD21 POL2'][index], readDict['SDD11 MLOG'][index],
@@ -209,7 +208,7 @@ def SParam():
         ws1 = wb.active
         ws1.title = 'Sheet1'
         sheet_ranges = wb['Sheet1']
-        firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'Attenuation', 'Frequency', 'SCC21 MLOG', 'SDC21 MLOG',
+        firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'Pout', 'PowerMode', 'Gain', 'Frequency', 'SCC21 MLOG', 'SDC21 MLOG',
                      'SDD11 POL1', 'SDD11 POL2', 'SDD12 MLOG', 'SDD21 GDEL', 'SDD21 MLOG', 'SDD21 POL1', 'SDD21 POL2',
                      'SDD11 MLOG', 'SDD22 MLOG', 'AV', 'CMRR1', 'CMRR2', 'Group Delay', 'S12_V']
         col = 1
@@ -249,10 +248,16 @@ def SParam():
                     instDict['Vcom'].__SetV__(vcom)
                     fh.write('Vcom = %g\n' % vcom)
                     time.sleep(0.2)
-                for atten in attenlist:
-                    fh.write('Atten = %g\n' % atten)
-                    pluto.Set_Amp_Atten(SPI_sel=channel, AmpAtten=atten)
-                    getData()
+                for Pout in Poutlist:
+                    fh.write('Pout != %g' % Pout)
+                    print 'Pout not yet implemented'
+                    for pwrmode in pwrmodelist:
+                        fh.write('Power Mode = %s' % pwrmode)
+                        pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode=pwrmode)
+                        for gain in gainlist:
+                            fh.write('Gain = %g\n' % gain)
+                            pluto.Set_Amp_Gain(SPI_sel=channel, GainValue=gain)
+                            getData()
 
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
@@ -283,16 +288,21 @@ if __name__ == '__main__':
     templist = [25]
     vcomlist = ['N/A']
     supplylist = [3.3]
-    attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    # attenlist = [0, 0.4, 0.8]
+    gainlist = ['12dB', '20dB']
+    pwrmodelist = ['Low', 'Hi']
+    Poutlist = [0, -8]
     dut = 'V1B3 B'
     channel = 'B'
 
     instDict = InstInit()
 
-    pluto = PlutoV1()
+    pluto = PlutoV0()
     pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
+    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
+    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
+    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
+    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
 
     SParam()
 
