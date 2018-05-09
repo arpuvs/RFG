@@ -168,6 +168,13 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
     instDict['Supply'].__SetV__(supplies[0])
     instDict['Supply'].__SetI__(0.25)
     instDict['Supply'].__SetEnable__(1)
+    pluto = PlutoV0()
+    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
+    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
+    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
+    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
+    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
     if vcomEnable:
         instDict['Vcom'].__SetEnable__(1)
 
@@ -197,8 +204,9 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
 
                             HD23()                          # Runs main HD23 measurement
 
-    # Returns oven to ambient temp, finds execution time and saves file
+    # Returns oven to ambient temp, finds execution time and saves file\
     instDict['Source'].__SetOut_OFF__()
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     if vcomEnable:
         instDict['Vcom'].__SetEnable(0)
@@ -212,7 +220,7 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
 # Called if program run by itself
 if __name__ == '__main__':
     # Sets all necessary variables
-    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\V0HD23.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\V0HD23.xlsx'
     # freqlist = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9]
     # freqs = [5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     freqs = [1, 5, 8, 10, 11, 12]
@@ -225,25 +233,19 @@ if __name__ == '__main__':
     vcomEnable = 0
     pksearchEnable = 1
     gainlist = ['12dB', '20dB']
-    pwrmodelist = ['Low', 'Hi']
-    Poutlist = [0, -8]
+    pwrmodelist = ['Lo', 'Hi']
+    Poutlist = [-8]
     maxPow = 15
     span = 1e3
     avg = 10
     BW = 10
 
-    dut = 'V0B2'
+    dut = 'V0B3'
     channel = 'A'
 
     instDict = InstInit()
 
-    pluto = PlutoV0()
-    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
-    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
-    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
-    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
-    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
+
 
 
     # pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
@@ -252,5 +254,5 @@ if __name__ == '__main__':
 
     HD23Main(path, supplies, freqs, vcoms, temps, dut, vcomEnable)  # Calls main program
 
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
+
 

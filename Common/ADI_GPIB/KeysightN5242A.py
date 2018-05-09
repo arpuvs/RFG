@@ -156,6 +156,16 @@ class KeysightN5424A(GPIBObjectBaseClass):
     def __GainCompMaxLevel__(self, channel, level):
         self.instr.write('SENS%d:GCS:POW:STOP:LEV %d' % (channel, level))
 
+    def __NoiseBW__(self, bw):
+        self.instr.write('SENS:NOIS:BWID %d' % bw)
+
+    def __PortPower__(self, channel, port, level):
+        self.instr.write('SOUR%d:POW%d %d' % (channel, level, port))
+
+    def __RestartAvg__(self, channel):
+        self.instr.write('SENS%d:AVER:CLE' % channel)
+
+
     def __FinishAvg__(self, channel, maxWait):
         endtime = time.time() + maxWait
         while True:

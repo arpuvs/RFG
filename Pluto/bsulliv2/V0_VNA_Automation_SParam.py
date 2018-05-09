@@ -77,6 +77,7 @@ def SParam():
     # Retrieves measured data from VNA and prints to file
     def getData():
         readDict = {}   # Dictionary for results to be stored in
+        instDict['NA'].__RestartAvg__(1)
         time.sleep(5)  # Necessary to let one sweep finish. Otherwise FinishAvg function does not work
         instDict['NA'].__FinishAvg__(1, 600)   # Pauses execution until VNA is finished averaging
 
@@ -232,6 +233,17 @@ def SParam():
 
     # header()
     instDict['Supply'].__SetEnable__(1)
+    pluto = PlutoV0()
+    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
+    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
+    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='OFF')
+    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
+    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
+
+    vocms = []
+
+
     VNAinit()
 
     # Main loop structure
@@ -255,13 +267,14 @@ def SParam():
                         fh.write('Power Mode = %s' % pwrmode)
                         pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode=pwrmode)
                         for gain in gainlist:
-                            fh.write('Gain = %g\n' % gain)
+                            fh.write('Gain = %s\n' % gain)
                             pluto.Set_Amp_Gain(SPI_sel=channel, GainValue=gain)
                             getData()
 
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
         Oven.__SetTemp__(25)
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     instDict['NA'].__Output__(0)
     endTime = time.time() - startTime
@@ -274,8 +287,8 @@ def SParam():
     wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\Raw\\Sparam\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\PlutoSparamSummary.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\SParam\\'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoSParamSummary.xlsx'
 
     Zin_diff = 100
     Zout_diff = 100
@@ -289,21 +302,16 @@ if __name__ == '__main__':
     vcomlist = ['N/A']
     supplylist = [3.3]
     gainlist = ['12dB', '20dB']
-    pwrmodelist = ['Low', 'Hi']
-    Poutlist = [0, -8]
-    dut = 'V1B3 B'
-    channel = 'B'
+    pwrmodelist = ['Lo', 'Hi']
+    # gainlist = ['12dB']
+    # pwrmodelist = ['Lo']
+    Poutlist = [-30]
+    dut = 'V0B3'
+    channel = 'A'
 
     instDict = InstInit()
 
-    pluto = PlutoV0()
-    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
-    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
-    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
-    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
-    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
+
 
     SParam()
 
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)

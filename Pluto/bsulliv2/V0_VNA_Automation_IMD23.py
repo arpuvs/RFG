@@ -155,6 +155,13 @@ def IMD():
 
     header()
     instDict['Supply'].__SetEnable__(1)
+    pluto = PlutoV0()
+    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
+    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
+    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
+    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
+    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
     # VNAinit()
 
     # Main loop structure
@@ -177,8 +184,8 @@ def IMD():
                         fh.write('PowerMode = %s' % pwrmode)
                         pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode=pwrmode)
                         for gain in gainlist:
-                            fh.write('Gain = %g\n' % gain)
-                            pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
+                            fh.write('Gain = %s\n' % gain)
+                            pluto.Set_Amp_Gain(SPI_sel=channel, GainValue=gain)
                             measlist = measlist2
                             delta = im2delta
                             VNAinit()
@@ -199,6 +206,7 @@ def IMD():
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
         Oven.__SetTemp__(25)
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     instDict['NA'].__Output__(0)
     endTime = time.time() - startTime
@@ -211,8 +219,8 @@ def IMD():
     wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\IMD\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\PlutoIMDSummary-8dBm.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\IMD\\'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoIMDSummaryRetest.xlsx'
 
     avg = 5
 
@@ -228,21 +236,14 @@ if __name__ == '__main__':
     vcomlist = ['N/A']
     supplylist = [3.3]
     gainlist = ['12dB', '20dB']
-    pwrmodelist = ['Low', 'Hi']
+    pwrmodelist = ['Lo', 'Hi']
     Poutlist = [-8]
-    dut = 'V1B2 A'
+    dut = 'V0B2 A'
     channel = 'A'
 
     instDict = InstInit()
 
-    pluto = PlutoV0()
-    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
-    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
-    pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
-    pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
-    pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
+
 
     IMD()
 
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)

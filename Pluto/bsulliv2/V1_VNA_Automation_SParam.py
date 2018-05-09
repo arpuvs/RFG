@@ -77,6 +77,7 @@ def SParam():
     # Retrieves measured data from VNA and prints to file
     def getData():
         readDict = {}   # Dictionary for results to be stored in
+        instDict['NA'].__RestartAvg__(1)
         time.sleep(5)  # Necessary to let one sweep finish. Otherwise FinishAvg function does not work
         instDict['NA'].__FinishAvg__(1, 600)   # Pauses execution until VNA is finished averaging
 
@@ -233,6 +234,10 @@ def SParam():
 
     # header()
     instDict['Supply'].__SetEnable__(1)
+    time.sleep(0.5)
+    pluto = PlutoV1()
+    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
     VNAinit()
 
     # Main loop structure
@@ -257,6 +262,7 @@ def SParam():
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
         Oven.__SetTemp__(25)
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     instDict['NA'].__Output__(0)
     endTime = time.time() - startTime
@@ -269,8 +275,8 @@ def SParam():
     wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\Raw\\Sparam\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Documents\\Results\\Pluto\\PlutoSparamSummary.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\Sparam\\'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\PlutoSparamSummaryRetest.xlsx'
 
     Zin_diff = 100
     Zout_diff = 100
@@ -285,15 +291,9 @@ if __name__ == '__main__':
     supplylist = [3.3]
     attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     # attenlist = [0, 0.4, 0.8]
-    dut = 'V1B3 B'
-    channel = 'B'
+    dut = 'V1B2 A'
+    channel = 'A'
 
     instDict = InstInit()
 
-    pluto = PlutoV1()
-    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
-
     SParam()
-
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
