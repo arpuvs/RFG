@@ -31,7 +31,6 @@ def IMD():
             trace = trace + 1
         instDict['NA'].__SetStartf__(1, startFreq)
         instDict['NA'].__SetStopf__(1, endFreq)
-        instDict['NA'].__SetNumPoints__(1, numPoints)
         instDict['NA'].__SetAvg__(1, avg)
         instDict['NA'].__SetAutoTime__(1, True)
         instDict['NA'].__EnableAvg__(1, True)
@@ -40,21 +39,42 @@ def IMD():
         instDict['NA'].__SetAttenuation__(10)
         instDict['NA'].__SetSourceAttenuation__(1, 2, 0)
         instDict['NA'].__RecallCal__('Pluto_IMD2')
+        instDict['NA'].__SetStopf__(1, endFreq)
+        instDict['NA'].__SetNumPoints__(1, numPoints)
+        instDict['NA'].__SetIMDIFBW__(1, ProductIFBW)
+        instDict['NA'].__SetMainIFBW__(1, MainIFBW)
         instDict['NA'].__IMDPower__(1, Pout)
         instDict['NA'].__SetIMDDelta__(1, float(delta))
         instDict['NA'].__EnableAvg__(1, True)
         instDict['NA'].__SetAvg__(1, avg)
 
     # Sets oven to specified temperature and soaks
-    def setTemp(setpoint):
-        Oven.__SetTemp__(setpoint)
-        current = float(Oven.__GetTemp__())
-        while (abs(current - setpoint) > 2):
-            time.sleep(1)
-            current = float(Oven.__GetTemp__())
-        print '@ Temp %d' % setpoint
+    def setTemp(temperature):
+        # Could add function to turn off supplies when ramping up per Greg's suggestion
+        instDict['thermo'].__SetupDUTMode__(HighTemp=145, LowTemp=-70, SensorType='K', TestTime=230)
+        instDict['thermo'].__SetDutDtype__(1)
+        instDict['thermo'].__SetDutThermalConst__(100)
+        instDict['thermo'].__EnableDUTMode__(SensorType='K')
+        off = False
+        instDict['thermo'].__SetTemp__(temperature)
+        instDict['thermo'].__FlowON__()
+        instDict['thermo'].__MoveArmDown__()
+        instDict['thermo'].__EnableDUTMode__('K')
+        time.sleep(5)
+        measTemp = instDict['thermo'].__GetDutTemperature__()
+        # if temperature > measTemp:
+        #     powerDown(instDict)
+        #     off = True
+        while (abs(temperature - measTemp) > 5):
+            time.sleep(10)
+            measTemp = instDict['thermo'].__GetDutTemperature__()
+            print measTemp
+        print 'At temp'
+        print 'Soaking...'
         time.sleep(300)
-        return True
+        # if off:
+        #     powerUp(instDict)
+        #     # chip = Linus(bridge_device='aardvark', linus_rev=2)
 
     # Retrieves measured data from VNA and prints to file
     def getData():
@@ -64,7 +84,7 @@ def IMD():
 
         time.sleep(20)  # Necessary to let one sweep finish. Otherwise FinishAvg function does not work
         print 'Done Sleeping'
-        instDict['NA'].__FinishAvg__(1, 600)   # Pauses execution until VNA is finished averaging
+        instDict['NA'].__FinishAvg__(1, 1200)   # Pauses execution until VNA is finished averaging
 
         # Retrieve data from VNA
         for meas in measlist:
@@ -105,7 +125,7 @@ def IMD():
         Acolumn = sheet_ranges['A']
         index = 0
         for row in range(len(Acolumn) + 1, len(Acolumn) + 49):
-            data = [dut, temp, supply, vcom, atten, freqlist[index], readDict2['PwrMainHi'][index],
+            data = [dut, temp, supply, vcom, MainIFBW, ProductIFBW, atten, freqlist[index], readDict2['PwrMainHi'][index],
                     readDict2['PwrMainLo'][index], readDict2['IM2HI'][index], readDict2['IM2LO'][index],
                     readDict2['PwrMainIN'][index], readDict2['OIP2LO'][index], readDict2['OIP2HI'][index],
                     readDict3['PwrMainHi'][index], readDict3['PwrMainHi'][index], readDict3['IM3HI'][index],
@@ -116,7 +136,7 @@ def IMD():
             index = index + int(numPoints / 50)
 
         index = len(freqlist) - 1
-        data = [dut, temp, supply, vcom, atten, freqlist[index], readDict2['PwrMainHi'][index],
+        data = [dut, temp, supply, vcom, MainIFBW, ProductIFBW, atten, freqlist[index], readDict2['PwrMainHi'][index],
                 readDict2['PwrMainLo'][index], readDict2['IM2HI'][index], readDict2['IM2LO'][index],
                 readDict2['PwrMainIN'][index], readDict2['OIP2LO'][index], readDict2['OIP2HI'][index],
                 readDict3['PwrMainHi'][index], readDict3['PwrMainHi'][index], readDict3['IM3HI'][index],
@@ -141,7 +161,7 @@ def IMD():
         ws1 = wb.active
         ws1.title = 'Sheet1'
         sheet_ranges = wb['Sheet1']
-        firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'Attenuation', 'Frequency', 'PwrMain2Hi', 'PwrMain2Lo', 'IM2HI',
+        firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'MainIFBW', 'ProductIFBW', 'Attenuation', 'Frequency', 'PwrMain2Hi', 'PwrMain2Lo', 'IM2HI',
                      'IM2LO', 'PwrMainIn2', 'OIP2LO', 'OIP2HI', 'PwrMain3Hi', 'PwrMain3Lo', 'IM3HI', 'IM3LO',
                      'PwrMainIn3', 'OIP3LO', 'OIP3HI']
         col = 1
@@ -155,6 +175,10 @@ def IMD():
 
     header()
     instDict['Supply'].__SetEnable__(1)
+    pluto = PlutoV1()
+    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
+
     # VNAinit()
 
     # Main loop structure
@@ -193,7 +217,9 @@ def IMD():
 
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
-        Oven.__SetTemp__(25)
+        setTemp(25)
+        instDict['thermo'].__FlowOFF__()
+    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     instDict['NA'].__Output__(0)
     endTime = time.time() - startTime
@@ -206,14 +232,15 @@ def IMD():
     wb.save(filename=summaryPath)
 
 if __name__ == '__main__':
-    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\IMD\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\PlutoIMDSummary-8dBm.xlsx'
+    path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\IMD\\'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\PlutoIMDSummaryNew.xlsx'
 
     avg = 5
 
-    numPoints = 201
+    numPoints = 51
     startFreq = 10.5e6
-    endFreq = 10.0105e9
+    # endFreq = 10.0105e9
+    endFreq = 2.015e9
     Pout = -8
 
     im2delta = '10e6'
@@ -223,16 +250,14 @@ if __name__ == '__main__':
     vcomlist = ['N/A']
     supplylist = [3.3]
     attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    # attenlist = []
-    dut = 'V1B2 A'
+    # attenlist = [0]
+    ProductIFBW = 10
+    MainIFBW = 1000
+    dut = 'V1B1 A'
     channel = 'A'
 
     instDict = InstInit()
 
-    pluto = PlutoV1()
-    pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
 
     IMD()
 
-    pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)

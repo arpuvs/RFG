@@ -8,6 +8,7 @@ from ADI_GPIB.TekDSA72504D import *
 from ADI_GPIB.AgilentE8257D import *
 from AgilentN9030A import *
 from KeysightN5242A import *
+from Thermo4300 import *
 # from SMAUSB import *
 
 def Main():

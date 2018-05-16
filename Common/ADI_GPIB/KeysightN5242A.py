@@ -137,6 +137,13 @@ class KeysightN5424A(GPIBObjectBaseClass):
     def __SetIMDDelta__(self, window, delta):
         self.instr.write('SENS%d:IMD:FREQ:DFR %g' % (window, delta))
 
+    def __SetIMDIFBW__(self, window, IFBW):
+        self.instr.write('SENS%d:IMD:IFBW:IMT %d' % (window, IFBW))
+
+    def __SetMainIFBW__(self, window, IFBW):
+        self.instr.write('SENS%d:IMD:IFBW:MAIN %d' % (window, IFBW))
+
+
     def __Preset__(self, type = 'partial'):
         if type.lower() == 'full':
             self.instr.write('SYST:FPR')

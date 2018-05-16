@@ -34,15 +34,32 @@ def NF():
         instDict['NA'].__EnableAvg__(1, True)
         instDict['NA'].__SetAvg__(1, avg)
 
-    def setTemp(setpoint):
-        Oven.__SetTemp__(setpoint)
-        current = float(Oven.__GetTemp__())
-        while (abs(current - setpoint) > 2):
-            time.sleep(1)
-            current = float(Oven.__GetTemp__())
-        print '@ Temp %d' % setpoint
-        time.sleep(300)
-        return True
+    def setTemp(temperature):
+            # Could add function to turn off supplies when ramping up per Greg's suggestion
+            instDict['thermo'].__SetupDUTMode__(HighTemp=145, LowTemp=-70, SensorType='K', TestTime=230)
+            instDict['thermo'].__SetDutDtype__(1)
+            instDict['thermo'].__SetDutThermalConst__(100)
+            instDict['thermo'].__EnableDUTMode__(SensorType='K')
+            off = False
+            instDict['thermo'].__SetTemp__(temperature)
+            instDict['thermo'].__FlowON__()
+            instDict['thermo'].__MoveArmDown__()
+            instDict['thermo'].__EnableDUTMode__('K')
+            time.sleep(5)
+            measTemp = instDict['thermo'].__GetDutTemperature__()
+            # if temperature > measTemp:
+            #     powerDown(instDict)
+            #     off = True
+            while (abs(temperature - measTemp) > 5):
+                time.sleep(10)
+                measTemp = instDict['thermo'].__GetDutTemperature__()
+                print measTemp
+            print 'At temp'
+            print 'Soaking...'
+            time.sleep(300)
+            # if off:
+            #     powerUp(instDict)
+            #     # chip = Linus(bridge_device='aardvark', linus_rev=2)
 
     def header():
         test = 'PNA-X NF'
@@ -162,7 +179,8 @@ def NF():
                         getData()
 
     if templist != [25]:
-        Oven.__SetTemp__(25)
+        setTemp(25)
+        instDict['thermo'].__FlowOFF__()
 
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)

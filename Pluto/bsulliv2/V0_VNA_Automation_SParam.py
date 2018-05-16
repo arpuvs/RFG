@@ -41,15 +41,32 @@ def SParam():
         instDict['NA'].__SetAvg__(1, avg)
 
     # Sets oven to specified temperature and soaks
-    def setTemp(setpoint):
-        Oven.__SetTemp__(setpoint)
-        current = float(Oven.__GetTemp__())
-        while (abs(current - setpoint) > 2):
-            time.sleep(1)
-            current = float(Oven.__GetTemp__())
-        print '@ Temp %d' % setpoint
-        time.sleep(300)
-        return True
+    def setTemp(temperature):
+            # Could add function to turn off supplies when ramping up per Greg's suggestion
+            instDict['thermo'].__SetupDUTMode__(HighTemp=145, LowTemp=-70, SensorType='K', TestTime=230)
+            instDict['thermo'].__SetDutDtype__(1)
+            instDict['thermo'].__SetDutThermalConst__(100)
+            instDict['thermo'].__EnableDUTMode__(SensorType='K')
+            off = False
+            instDict['thermo'].__SetTemp__(temperature)
+            instDict['thermo'].__FlowON__()
+            instDict['thermo'].__MoveArmDown__()
+            instDict['thermo'].__EnableDUTMode__('K')
+            time.sleep(5)
+            measTemp = instDict['thermo'].__GetDutTemperature__()
+            # if temperature > measTemp:
+            #     powerDown(instDict)
+            #     off = True
+            while (abs(temperature - measTemp) > 5):
+                time.sleep(10)
+                measTemp = instDict['thermo'].__GetDutTemperature__()
+                print measTemp
+            print 'At temp'
+            print 'Soaking...'
+            time.sleep(300)
+            # if off:
+            #     powerUp(instDict)
+            #     # chip = Linus(bridge_device='aardvark', linus_rev=2)
 
     # The following three functions are simple math operations taken from VNA Vee program
     def build_av(mlog):
@@ -240,6 +257,7 @@ def SParam():
     pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
     pluto.Set_Amp_Trim(SPI_sel=channel, AmpTrimCode=15)
+    # print pluto.GetReadDataRegisterValue(SPI_sel=channel)
 
     vocms = []
 
@@ -269,11 +287,13 @@ def SParam():
                         for gain in gainlist:
                             fh.write('Gain = %s\n' % gain)
                             pluto.Set_Amp_Gain(SPI_sel=channel, GainValue=gain)
+                            # print pluto.GetReadDataRegisterValue(SPI_sel=channel)
                             getData()
 
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
-        Oven.__SetTemp__(25)
+        setTemp(25)
+        instDict['thermo'].__FlowOFF__()
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     instDict['NA'].__Output__(0)
@@ -288,7 +308,7 @@ def SParam():
 
 if __name__ == '__main__':
     path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\SParam\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoSParamSummary.xlsx'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoSParamSummaryTemp.xlsx'
 
     Zin_diff = 100
     Zout_diff = 100
@@ -298,7 +318,7 @@ if __name__ == '__main__':
     startFreq = 10e6
     endFreq = 10.01e9
 
-    templist = [25]
+    templist = [-40, 85, 25]
     vcomlist = ['N/A']
     supplylist = [3.3]
     gainlist = ['12dB', '20dB']
@@ -306,7 +326,7 @@ if __name__ == '__main__':
     # gainlist = ['12dB']
     # pwrmodelist = ['Lo']
     Poutlist = [-30]
-    dut = 'V0B3'
+    dut = 'V0B1'
     channel = 'A'
 
     instDict = InstInit()

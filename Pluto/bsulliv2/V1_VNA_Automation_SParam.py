@@ -41,15 +41,32 @@ def SParam():
         instDict['NA'].__SetAvg__(1, avg)
 
     # Sets oven to specified temperature and soaks
-    def setTemp(setpoint):
-        Oven.__SetTemp__(setpoint)
-        current = float(Oven.__GetTemp__())
-        while (abs(current - setpoint) > 2):
-            time.sleep(1)
-            current = float(Oven.__GetTemp__())
-        print '@ Temp %d' % setpoint
-        time.sleep(300)
-        return True
+    def setTemp(temperature):
+            # Could add function to turn off supplies when ramping up per Greg's suggestion
+            instDict['thermo'].__SetupDUTMode__(HighTemp=145, LowTemp=-70, SensorType='K', TestTime=230)
+            instDict['thermo'].__SetDutDtype__(1)
+            instDict['thermo'].__SetDutThermalConst__(100)
+            instDict['thermo'].__EnableDUTMode__(SensorType='K')
+            off = False
+            instDict['thermo'].__SetTemp__(temperature)
+            instDict['thermo'].__FlowON__()
+            instDict['thermo'].__MoveArmDown__()
+            instDict['thermo'].__EnableDUTMode__('K')
+            time.sleep(5)
+            measTemp = instDict['thermo'].__GetDutTemperature__()
+            # if temperature > measTemp:
+            #     powerDown(instDict)
+            #     off = True
+            while (abs(temperature - measTemp) > 5):
+                time.sleep(10)
+                measTemp = instDict['thermo'].__GetDutTemperature__()
+                print measTemp
+            print 'At temp'
+            print 'Soaking...'
+            time.sleep(300)
+            # if off:
+            #     powerUp(instDict)
+            #     # chip = Linus(bridge_device='aardvark', linus_rev=2)
 
     # The following three functions are simple math operations taken from VNA Vee program
     def build_av(mlog):
@@ -170,11 +187,11 @@ def SParam():
 
     def summary(freqlist, readDict):
         # columns = [dut, temp, supply, vcom, atten, freqlist, scc21]
-
+        read = hex(pluto.GetReadDataRegisterValue(SPI_sel=channel))
         Acolumn = sheet_ranges['A']
         index = 0
         for row in range(len(Acolumn)+1, len(Acolumn) + 50):
-            data = [dut, temp, supply, vcom, atten, freqlist[index], readDict['SCC21 MLOG'][index],
+            data = [dut, temp, supply, vcom, atten, read, freqlist[index], readDict['SCC21 MLOG'][index],
                     readDict['SDC21 MLOG'][index], readDict['SDD11 POL1'][index], readDict['SDD11 POL2'][index],
                     readDict['SDD12 MLOG'][index], readDict['SDD21 GDEL'][index], readDict['SDD21 MLOG'][index],
                     readDict['SDD21 POL1'][index], readDict['SDD21 POL2'][index], readDict['SDD11 MLOG'][index],
@@ -185,7 +202,7 @@ def SParam():
             index = index + int(numPoints/50)
 
         index = len(freqlist)-1
-        data = [dut, temp, supply, vcom, atten, freqlist[index], readDict['SCC21 MLOG'][index],
+        data = [dut, temp, supply, vcom, atten, read, freqlist[index], readDict['SCC21 MLOG'][index],
                 readDict['SDC21 MLOG'][index], readDict['SDD11 POL1'][index], readDict['SDD11 POL2'][index],
                 readDict['SDD12 MLOG'][index], readDict['SDD21 GDEL'][index], readDict['SDD21 MLOG'][index],
                 readDict['SDD21 POL1'][index], readDict['SDD21 POL2'][index], readDict['SDD11 MLOG'][index],
@@ -210,7 +227,7 @@ def SParam():
         ws1 = wb.active
         ws1.title = 'Sheet1'
         sheet_ranges = wb['Sheet1']
-        firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'Attenuation', 'Frequency', 'SCC21 MLOG', 'SDC21 MLOG',
+        firstline = ['DUT', 'Temp', 'Supply', 'Vcom', 'Attenuation', 'RegVal', 'Frequency', 'SCC21 MLOG', 'SDC21 MLOG',
                      'SDD11 POL1', 'SDD11 POL2', 'SDD12 MLOG', 'SDD21 GDEL', 'SDD21 MLOG', 'SDD21 POL1', 'SDD21 POL2',
                      'SDD11 MLOG', 'SDD22 MLOG', 'AV', 'CMRR1', 'CMRR2', 'Group Delay', 'S12_V']
         col = 1
@@ -238,6 +255,8 @@ def SParam():
     pluto = PlutoV1()
     pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
+    pluto.Set_Amp_Atten(SPI_sel=channel, AmpAtten=0)
+    print pluto.GetReadDataRegisterValue(SPI_sel=channel)
     VNAinit()
 
     # Main loop structure
@@ -254,14 +273,24 @@ def SParam():
                     instDict['Vcom'].__SetV__(vcom)
                     fh.write('Vcom = %g\n' % vcom)
                     time.sleep(0.2)
-                for atten in attenlist:
-                    fh.write('Atten = %g\n' % atten)
+                atteni = 0
+                # for atten in attenlist:
+                for write in writelist:
+                    atten = attenlist[atteni]
+                    print 'At atten %d' % atten
+                    atteni = atteni + 1
+                    # fh.write('Atten = %g\n' % atten)
+                    fh.write('Write = %x\n' % write)
+                    print write
+                    # pluto.Write8BitData([write])
+                    # pluto.UpdateDataRegisters(SPI_sel=channel, dataForRegister=write)
                     pluto.Set_Amp_Atten(SPI_sel=channel, AmpAtten=atten)
                     getData()
 
     # Final actions: return to temperature, get execution time and close file
     if templist != [25]:
-        Oven.__SetTemp__(25)
+        setTemp(25)
+        instDict['thermo'].__FlowOFF__()
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=False)
     instDict['Supply'].__SetEnable__(0)
     instDict['NA'].__Output__(0)
@@ -276,7 +305,7 @@ def SParam():
 
 if __name__ == '__main__':
     path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\Sparam\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\PlutoSparamSummaryRetest.xlsx'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV1\\PlutoSparamSummaryReadTest.xlsx'
 
     Zin_diff = 100
     Zout_diff = 100
@@ -286,12 +315,15 @@ if __name__ == '__main__':
     startFreq = 10e6
     endFreq = 10.01e9
 
+
+    # templist = [-40, 85, 25]
     templist = [25]
     vcomlist = ['N/A']
     supplylist = [3.3]
     attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    writelist = [0x08, 0x18, 0x28, 0x38, 0x48, 0x58, 0x68, 0x78, 0x88, 0x98]
     # attenlist = [0, 0.4, 0.8]
-    dut = 'V1B2 A'
+    dut = 'V1B6 A'
     channel = 'A'
 
     instDict = InstInit()
