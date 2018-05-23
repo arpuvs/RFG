@@ -8,6 +8,7 @@ from ADI_GPIB.TekDSA72504D import *
 from ADI_GPIB.AgilentE8257D import *
 from AgilentN9030A import *
 from KeysightN5242A import *
+from AgilentN5181A import *
 from Thermo4300 import *
 # from SMAUSB import *
 
@@ -31,10 +32,12 @@ def InstInit():
     # instDict['Supply1'] = Keithley2230('0x05E6::0x2230::9200268')
     # instDict['Supply3'] = Keithley2230('0x05E6::0x2230::9200526')
     instDict['Supply'] = HP661XC(9)
-    instDict['Vcom'] = HP661XC(5)
+    instDict['vcom'] = HP661XC(5)
     instDict['Source'] = AgilentE8257D(12)
     instDict['SA'] = AgilentN9030A(18)
     instDict['NA'] = KeysightN5424A(16)
+    instDict['source1'] = AgilentN5181A('20')
+    instDict['source2'] = AgilentN5181A('11')
     # instDict['thermo'] = Thermo4300(29, 1, 140, -60)
     # instDict['scope'] = TekDSA72504D(15)
     return instDict

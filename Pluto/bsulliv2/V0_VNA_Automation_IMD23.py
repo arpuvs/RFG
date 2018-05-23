@@ -35,15 +35,15 @@ def IMD():
         instDict['NA'].__SetAvg__(1, avg)
         instDict['NA'].__SetAutoTime__(1, True)
         instDict['NA'].__EnableAvg__(1, True)
-        # instDict['NA'].__IMDPowType__(1, 'OUTPUT')
         # instDict['NA'].__IMDPower__(1, Pout)
-        instDict['NA'].__SetAttenuation__(10)
-        instDict['NA'].__SetSourceAttenuation__(1, 2, 0)
         instDict['NA'].__RecallCal__('Pluto_IMD2')
+        instDict['NA'].__SetAttenuation__(0)
+        instDict['NA'].__SetSourceAttenuation__(1, 2, 0)
         instDict['NA'].__SetStopf__(1, endFreq)
         instDict['NA'].__SetNumPoints__(1, numPoints)
         instDict['NA'].__SetIMDIFBW__(1, ProductIFBW)
         instDict['NA'].__SetMainIFBW__(1, MainIFBW)
+        instDict['NA'].__IMDPowType__(1, 'OUTPUT')
         instDict['NA'].__IMDPower__(1, Pout)
         instDict['NA'].__SetIMDDelta__(1, float(delta))
         instDict['NA'].__EnableAvg__(1, True)
@@ -178,7 +178,7 @@ def IMD():
     instDict['Supply'].__SetEnable__(1)
     pluto = PlutoV0()
     pluto.connect(DUT1_Default=0x00, DUT2_Default=0x00)
-    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='12dB')
+    pluto.Set_Amp_Gain(SPI_sel=channel, GainValue='20dB')
     pluto.Set_Amp_Coupling(SPI_sel=channel, Coupling='ON')
     pluto.Set_Amp_Pwr_Mod(SPI_sel=channel, PowerMode="Hi")
     pluto.Set_Amp_Enable(SPI_sel=channel, AmpEnable=True)
@@ -197,6 +197,7 @@ def IMD():
             for vcom in vcomlist:
                 if vcom != 'N/A':
                     instDict['vcom'].__SetV__(vcom)
+                    instDict['vcom'].__SetEnable__(1)
                     fh.write('Vcom = %g\n' % vcom)
                     time.sleep(0.2)
                 for Pout in Poutlist:
@@ -242,27 +243,27 @@ def IMD():
 
 if __name__ == '__main__':
     path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\IMD\\'
-    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoIMDSummaryRetest.xlsx'
+    summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoIMDSummaryPoutTest.xlsx'
 
-    avg = 5
+    avg = 3
 
     numPoints = 201
     startFreq = 10.5e6
-    endFreq = 10.0105e9
-    Pout = -8
+    endFreq = 2.0105e9
+    # Pout = -6
 
     im2delta = '10e6'
     im3delta = '2e6'
-
     templist = [25]
-    vcomlist = ['N/A']
+    # templist = [-40, 85, 25]
+    vcomlist = [1.2]
     supplylist = [3.3]
     gainlist = ['12dB', '20dB']
     pwrmodelist = ['Lo', 'Hi']
-    Poutlist = [-8]
+    Poutlist = [-18]
     ProductIFBW = 10
     MainIFBW = 1000
-    dut = 'V0B2 A'
+    dut = 'V0B2 A + 10dB pads Output referred'
     channel = 'A'
 
     instDict = InstInit()

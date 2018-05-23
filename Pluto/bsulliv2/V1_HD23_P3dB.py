@@ -13,6 +13,7 @@ from ADI_GPIB.WatlowF4 import *
 from openpyxl import *
 from BSTest import *
 from PlutoV1 import PlutoV1
+from pushbullet import pushbullet
 
 
 # Main body of code, called by GUI
@@ -219,9 +220,15 @@ def HD23Main(path, supplyVlist, freqlist, vcomlist, templist, dutNumber, vcomEna
     if templist != [25]:
         setTemp(25)
         instDict['thermo'].__FlowOFF__()
-    print time.time()-startTime
+    elapsedtime = time.time() - startTime
+    print elapsedtime
     wb.save(filename=path)
     print 'Done!'
+
+    key = 'o.0fWIoYany1oZxKkpg4pGHWvJUYqVHXPW'
+    p = pushbullet.PushBullet(key)
+    devices = p.getDevices()
+    p.pushNote(devices[0]['iden'], 'Demo Test Done', '%d' % elapsedtime)
 
 
 # Called if program run by itself

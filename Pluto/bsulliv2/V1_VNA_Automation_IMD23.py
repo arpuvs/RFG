@@ -246,14 +246,14 @@ if __name__ == '__main__':
     im2delta = '10e6'
     im3delta = '2e6'
 
-    templist = [25]
+    templist = [-40, 85, 25]
     vcomlist = ['N/A']
     supplylist = [3.3]
     attenlist = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     # attenlist = [0]
     ProductIFBW = 10
     MainIFBW = 1000
-    dut = 'V1B1 A'
+    dut = 'V1B2 A'
     channel = 'A'
 
     instDict = InstInit()
