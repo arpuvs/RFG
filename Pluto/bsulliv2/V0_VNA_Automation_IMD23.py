@@ -11,6 +11,8 @@ sys.path.append('../../Common')
 from openpyxl import *
 from BSTest import *
 from PlutoV0 import PlutoV0
+from pushbullet import pushbullet
+
 
 # VNA = KeysightN5424A(17)
 # Oven = WatlowF4(4)
@@ -241,6 +243,11 @@ def IMD():
     fh.close()
     wb.save(filename=summaryPath)
 
+    key = 'o.0fWIoYany1oZxKkpg4pGHWvJUYqVHXPW'
+    p = pushbullet.PushBullet(key)
+    devices = p.getDevices()
+    p.pushNote(devices[0]['iden'], 'IMD Test Done', '%d' % endTime)
+
 if __name__ == '__main__':
     path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\IMD\\'
     summaryPath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\PlutoIMDSummaryPoutTest.xlsx'
@@ -256,11 +263,11 @@ if __name__ == '__main__':
     im3delta = '2e6'
     templist = [25]
     # templist = [-40, 85, 25]
-    vcomlist = [1.2]
+    vcomlist = [0.9]
     supplylist = [3.3]
     gainlist = ['12dB', '20dB']
     pwrmodelist = ['Lo', 'Hi']
-    Poutlist = [-18]
+    Poutlist = [-12]
     ProductIFBW = 10
     MainIFBW = 1000
     dut = 'V0B2 A + 10dB pads Output referred'

@@ -11,6 +11,7 @@ from ADI_GPIB.WatlowF4 import *
 from pushbullet import pushbullet
 from PlutoV0 import PlutoV0
 from BSTest import *
+from openpyxl import *
 
 # Instrument initialization
 startTime = time.time()
@@ -145,6 +146,132 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
         fh.write(str(rightNormal).strip('[]'))
         fh.write('\n')
 
+        def IMD2():
+            # Initializes spectrum analyzer for measurements
+            instDict['SA'].__SetSpan__(10e3)
+            instDict['SA'].__SetAverage__(50)
+
+            # Initializes arrays
+            lowerPeak = []
+            higherPeak = []
+            lowCarrier = []
+            highCarrier = []
+            higherSourceAmp = []
+            lowerSourceAmp = []
+            supplyI = []
+
+            for freq in freqlist:
+                # Set sources
+                instDict['source1'].__SetState__(0)
+                instDict['source2'].__SetState__(0)
+                instDict['source1'].__SetFreq__(freq - delta2 / 2)
+                instDict['source2'].__SetFreq__(freq + delta2 / 2)
+
+                # Configure and measure low f Carrier
+                instDict['SA'].__Setfc__(freq - delta2 / 2)
+                instDict['source1'].__SetState__(1)
+                instDict['SA'].__ClearAverage__()
+                instDict['SA'].__CheckStatus__(300)  # Waits for averaging
+                if pkSearch:
+                    instDict['SA'].__PeakSearch__(1)
+                else:
+                    instDict['SA'].__SetMarkerFreq__(1, freq - delta2 / 2)
+                carrierMag = float(instDict['SA'].__GetMarkerAmp__(1))  # Measures initial amplitude
+                while abs(carrierMag - Pout) >= 0.1:  # Adjusts until carrier mag is within 0.1dBm of desired amplitude
+                    sourceAmp = float(instDict['source1'].__GetAmp__())  # Gets amplitude
+                    setAmp = sourceAmp + (Pout - carrierMag)  # Adjusts amplitude
+                    if setAmp >= 15:  # Raises flag if max amplitude exceeded
+                        raise Exception('Amplitude too high, check configuration')
+                    instDict['source1'].__SetAmp__(setAmp)  # Sets new amplitude
+                    instDict['SA'].__ClearAverage__()
+                    instDict['SA'].__CheckStatus__(300)
+                    carrierMag = float(instDict['SA'].__GetMarkerAmp__(1))  # Gets new amplitude
+
+                # Records measured source and carrier values
+                lowCarrier.append(float(instDict['SA'].__GetMarkerAmp__(1)))
+                lowerSourceAmp.append(float(instDict['source1'].__GetAmp__()))
+
+                # Repeat for high f carrier - same process as above
+                instDict['source1'].__SetState__(0)
+                instDict['SA'].__Setfc__(freq + delta2 / 2)
+                instDict['source2'].__SetState__(1)
+                instDict['SA'].__ClearAverage__()
+                instDict['SA'].__CheckStatus__(300)
+                if pkSearch == True:
+                    instDict['SA'].__PeakSearch__(1)
+                else:
+                    instDict['SA'].__SetMarkerFreq__(1, freq + delta2 / 2)
+                carrierMag = float(instDict['SA'].__GetMarkerAmp__(1))
+                while abs(carrierMag - Pout) >= 0.1:
+                    sourceAmp = float(instDict['source2'].__GetAmp__())
+                    setAmp = sourceAmp + (Pout - carrierMag)
+                    if setAmp >= 15:
+                        raise Exception('Amplitude too high, check configuration')
+                    instDict['source2'].__SetAmp__(setAmp)
+                    instDict['SA'].__ClearAverage__()
+                    instDict['SA'].__CheckStatus__(300)
+                    carrierMag = float(instDict['SA'].__GetMarkerAmp__(1))
+                highCarrier.append(float(instDict['SA'].__GetMarkerAmp__(1)))
+                higherSourceAmp.append(float(instDict['source2'].__GetAmp__()))
+
+                # Measure lower IMD2
+                instDict['source1'].__SetState__(1)
+                instDict['SA'].__Setfc__(freq - (1.5 * delta2))
+                instDict['SA'].__ClearAverage__()
+                instDict['SA'].__CheckStatus__(300)
+                if pkSearch == True:
+                    instDict['SA'].__PeakSearch__(1)
+                else:
+                    instDict['SA'].__SetMarkerFreq__(1, freq - (1.5 * delta2))
+                # raw_input('Waiting...')
+                lowerPeak.append(float(instDict['SA'].__GetMarkerAmp__(1)))
+
+                # Measure higher IMD3
+                instDict['SA'].__Setfc__(freq + (1.5 * delta2))
+                instDict['SA'].__ClearAverage__()
+                instDict['SA'].__CheckStatus__(300)
+                if pkSearch == True:
+                    instDict['SA'].__PeakSearch__(1)
+                else:
+                    instDict['SA'].__SetMarkerFreq__(1, freq + (1.5 * delta2))
+                higherPeak.append(float(instDict['SA'].__GetMarkerAmp__(1)))
+                supplyI.append(float(instDict['Supply'].__GetI__()))
+
+            leftNormal = []
+            rightNormal = []
+            # Converts dBm measurements to dBc
+            for j in range(len(lowerPeak)):
+                leftNormal.append(-(float(lowCarrier[j]) - float(lowerPeak[j])))
+                rightNormal.append(-(float(highCarrier[j]) - float(higherPeak[j])))
+
+            # Writes all results to output file
+            # fh.write('Test %d' % i)
+            # fh.write('\n')
+            fh.write('Frequency:,')
+            fh.write(str(freqlist).strip('[]'))
+            fh.write('\n')
+            fh.write('Supply Current:,')
+            fh.write(str(supplyI).strip('[]'))
+            fh.write('\n')
+            fh.write('Low left:,')
+            fh.write(str(lowerPeak).strip('[]'))
+            fh.write('\n')
+            fh.write('Low right:,')
+            fh.write(str(higherPeak).strip('[]'))
+            fh.write('\n')
+            fh.write('High left:,')
+            fh.write(str(highCarrier).strip('[]'))
+            fh.write('\n')
+            fh.write('High right:,')
+            fh.write(str(lowCarrier).strip('[]'))
+            fh.write('\n')
+            fh.write('Left dBc:,')
+            fh.write(str(leftNormal).strip('[]'))
+            fh.write('\n')
+            fh.write('Right dBc:,')
+            fh.write(str(rightNormal).strip('[]'))
+            fh.write('\n')
+
         # Print first line of file
     def header():
         test = 'IMD3'
@@ -262,6 +389,7 @@ def IMD3main(path, freqlist, vcomlist, templist, dut):
 if __name__ == '__main__':
     pkSearch = True
     path = 'C:\\Users\\bsulliv2\\Desktop\\Results\\PlutoV0\\SA_IMD\\'
+    summarypath = 'C:\\Users\\bsulliv2\\Desktop\\Results\\Pluto\\V0\\IMD.xlsx'
     # freqs = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9, 2.5e9, 3.0e9, 3.5e9, 4.0e9, 4.5e9, 5.0e9, 5.5e9, 5.9e9]
     freqs = [100e6, 250e6, 500e6, 1.0e9, 1.5e9, 2.0e9]
     # freqs = [6e9]

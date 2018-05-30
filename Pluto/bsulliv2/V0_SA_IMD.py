@@ -269,7 +269,7 @@ if __name__ == '__main__':
     # for i in range(20, 31):
     #     vcoms.append(i/10.0)
     # vcoms = [2.0, 2.5, 3.0]
-    vcoms = [1.2]
+    vcoms = [0.9]
     # temps = [25, 85, -40]
     delta = 2e6
     temps = [25]
